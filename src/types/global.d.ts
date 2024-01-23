@@ -1,5 +1,12 @@
 // declare module "obsidian" {}
 
 interface QSWSettings {
-    mySetting: string
+    wrappers: Record <string, Wrapper>;
+}
+
+interface Wrapper {
+    id: string;
+    name: string;
+    startTag: string;
+    endTag: string;
 }

@@ -1,5 +1,27 @@
 import { App, Modal, Setting } from "obsidian";
 
+
+export class NewWrapperModal extends Modal {
+	constructor(app: App) {
+		super(app);
+	}
+
+	onOpen() {
+		const { contentEl } = this;
+		
+	}
+
+	onClose() {
+		const { contentEl } = this;
+		contentEl.empty();
+	}
+}
+
+
+
+
+
+
 type ConfirmCallback = (confirmed: boolean) => void;
 
 export class SampleModal extends Modal {
