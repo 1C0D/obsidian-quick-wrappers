@@ -1,7 +1,7 @@
 {
-  "name": "obsidian-sample-plugin",
+  "name": "quick-shortcuts-wrapper",
   "version": "1.0.0",
-  "description": "desc",
+  "description": "wrap with shortcuts reborn",
   "main": "main.js",
   "type": "module",
   "scripts": {
@@ -15,7 +15,7 @@
     "test": "tsx scripts/test-plugin.mts"
   },
   "keywords": [],
-  "author": "1C0D",
+  "author": "1C0D & Mara-Li",
   "license": "MIT",
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",

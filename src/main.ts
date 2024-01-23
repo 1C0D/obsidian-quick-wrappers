@@ -1,17 +1,15 @@
-import { Plugin } from "obsidian";
-import { SampleSettingTab } from "./settings.js";
-import { DEFAULT_SETTINGS, MyPluginSettings } from "./types.js";
-import { Console } from "./Console.js";
+import { App, Plugin } from "obsidian";
+import { QSWSettingTab } from "./settings";
+import { DEFAULT_SETTINGS } from "./types/variables";
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+
+
+export default class QSWPlugin extends Plugin {
+	settings: QSWSettings;
 	
 	async onload() {
-
-		Console.log("logs...");
-
 		await this.loadSettings();
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new QSWSettingTab(this.app, this));
 	}
 
 	async loadSettings() {

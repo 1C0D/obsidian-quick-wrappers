@@ -1,11 +1,10 @@
 {
-	"id": "sample-plugin-modif",
-	"name": "Sample Plugin modif",
+	"id": "quick-shortcuts-wrapper",
+	"name": "Quick Shortcuts Wrapper",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "sample plugin modif.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "wrap with shortcuts reborn.",
+	"author": "1C0D & Mara-Li",
+	"authorUrl": "https://github.com/1C0D",
 	"isDesktopOnly": false
 }

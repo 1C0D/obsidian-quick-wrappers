@@ -1,8 +1,9 @@
-import { App, PluginSettingTab, Setting } from "obsidian";
-import MyPlugin from "./main.js";
+import { PluginSettingTab, App } from "obsidian";
+import QSWPlugin from "./main";
 
-export class SampleSettingTab extends PluginSettingTab {
-	constructor(app: App, public plugin: MyPlugin) {
+
+export class QSWSettingTab extends PluginSettingTab {
+	constructor(app: App, public plugin: QSWPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -12,17 +13,7 @@ export class SampleSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		new Setting(containerEl)
-			.setName("Setting #1")
-			.setDesc("secret")
-			.addText((text) =>
-				text
-					.setPlaceholder("Enter your secret")
-					.setValue(this.plugin.settings.mySetting)
-					.onChange(async (value) => {
-						this.plugin.settings.mySetting = value;
-						await this.plugin.saveSettings();
-					})
-			);
+		// new Setting(containerEl)
+
 	}
 }
