@@ -33,6 +33,7 @@ export default class QSWPlugin extends Plugin {
 		let id: string;
 		if (!names.includes(name)) {
 			id = this.generateKey();
+			console.log("id", id)
 			this.settings.wrappers[id] = {
 				id,
 				name,
@@ -51,19 +52,16 @@ export default class QSWPlugin extends Plugin {
 				endTagInput: endTag,
 			}
 
-			// 	(wrapper) => wrapper.name === name)[0].id
-			// id = settings.wrappers[names.indexOf(name)].id
-
-
 		}
 
 		await this.saveSettings();
 	}
 
 	generateKey() {
-		const array = new Uint32Array(2);
-		window.crypto.getRandomValues(array);
-		return array.join("-");
+		const pluginId = this.manifest.id;
+		const prefix = "qsw-";
+		const timestamp = (Date.now() % 1000000).toString();
+		return pluginId + ":" + prefix + timestamp
 	}
 
 	async loadSettings() {

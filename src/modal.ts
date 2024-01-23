@@ -1,5 +1,6 @@
-import { App, Modal, Setting } from "obsidian";
+import { App, Modal, Notice, Setting, TextComponent } from "obsidian";
 import QSWPlugin from "./main";
+import { CommonSuggest } from "./suggester";
 
 type OnSubmitCallback = (name: string, startTag: string, endTag: string) => void
 
@@ -7,9 +8,12 @@ export class NewWrapperModal extends Modal {
 	name: string
 	startTag: string
 	endTag: string
+	inputEl: HTMLInputElement
+	suggester: CommonSuggest
+	nameInput: TextComponent
 
 	constructor(app: App, public plugin: QSWPlugin, public onSubmit: OnSubmitCallback,
-) {
+	) {
 		super(app);
 	}
 
@@ -17,45 +21,52 @@ export class NewWrapperModal extends Modal {
 		const { contentEl, plugin } = this;
 		contentEl.empty();
 
-		contentEl.createEl("h1", { text: "Create a wrapper" });
+		contentEl.createEl("h1", { text: "Create or Edit a wrapper" });
 
-		// replace this by a suggester of existing names in settings to select or enter a new value
+		// add a button to delete name and setting. with confirmation
 		new Setting(contentEl)
-		.setName("Tag Name")
-		.setDesc("Enter a tag name.")
-		.addText(text => text
-			.setPlaceholder("Tag Name")
-			.onChange(async (value) => {
-				this.name = value;
+			.setName("Tag Name")
+			.setDesc("Enter a tag name.")
+			.addText(text => {
+				this.inputEl = text.inputEl
+				this.nameInput = text  // used in the fuzzy suggester
+				this.inputEl.onfocus = () => {
+					this.suggester.open();
+				}
 			})
-		);
+		this.suggester = new CommonSuggest(this.app, this);
+
 		new Setting(contentEl)
-		.setName("Start Tag")
-		.setDesc("Enter Start tag.")
-		.addTextArea(text => text
-			.setPlaceholder("```js\n(added line)")
-			.onChange(async (value) => {
-				this.startTag = value;
-			})
-		);
+			.setName("Start Tag")
+			.setDesc("Enter Start tag.")
+			.addTextArea(text => text
+				.setPlaceholder("```js\n(added line)")
+				.onChange(async (value) => {
+					this.startTag = value;
+				})
+			);
 		new Setting(contentEl)
-		.setName("End Tag")
-		.setDesc("Enter End tag.")
-		.addTextArea(text => text
-			.setPlaceholder("\n```")
-			.onChange(async (value) => {
-				this.endTag = value;
-			})
-		);
+			.setName("End Tag")
+			.setDesc("Enter End tag.")
+			.addTextArea(text => text
+				.setPlaceholder("\n```")
+				.onChange(async (value) => {
+					this.endTag = value;
+				})
+			);
 
 
 		new Setting(this.contentEl)
 			.addButton((b) => {
 				b.setIcon("checkmark")
 					.setCta()
-					.onClick(() => {					
-						this.onSubmit(this.name, this.startTag, this.endTag);
-						this.close();
+					.onClick(() => {
+						if(!this.name) { // more conditions to add later
+							new Notice("Please enter a name.", 2000);
+						}else{
+							this.onSubmit(this.name, this.startTag, this.endTag);
+							this.close();
+						}
 					});
 			})
 	}
@@ -65,8 +76,6 @@ export class NewWrapperModal extends Modal {
 		contentEl.empty();
 	}
 }
-
-
 
 
 type ConfirmCallback = (confirmed: boolean) => void;
