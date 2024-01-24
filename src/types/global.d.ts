@@ -3,6 +3,7 @@
 interface QSWSettings {
     names: string[];
     wrappers: Record<string, Wrapper>;
+    runNext: boolean;
 }
 
 interface Wrapper {

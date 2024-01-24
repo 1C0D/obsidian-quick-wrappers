@@ -6,6 +6,7 @@ type OnSubmitCallback = (name: string, tag: string) => void
 
 export class NewWrapperModal extends Modal {
 	name: string
+	error: boolean
 	tag: string
 	inputEl: HTMLInputElement
 	suggester: CommonSuggest
@@ -39,7 +40,7 @@ export class NewWrapperModal extends Modal {
 
 		new Setting(contentEl)
 			.setName("Tag")
-			.setDesc("Enter $SELECTION surrounded by tag. Or $CLIPBOARD. You can add several markers and mix them")
+			.setDesc("Enter $SEL surrounded by tag. Or $CLIPBOARD. You can add several markers and mix them")
 			.addTextArea(async text => {
 				let setTag = ""
 				const name = await this.getNameAsync(); // this.name undefined without a delay
@@ -53,7 +54,7 @@ export class NewWrapperModal extends Modal {
 					};
 				}
 				text
-					.setPlaceholder("```js\n$SELECTION\n```")
+					.setPlaceholder("```js\n$SEL\n```")
 					.setValue(setTag)
 					.onChange(async (value) => {
 						this.tag = value;
@@ -62,14 +63,17 @@ export class NewWrapperModal extends Modal {
 				text.inputEl.setAttr("cols", 30)
 			});
 
+		checkbox(this, contentEl, "Then apply tag on document")
+
 		new Setting(this.contentEl)
 			.addButton((b) => {
 				b.setIcon("checkmark")
 					.setCta()
 					.onClick(() => {
-						if (!this.name) { // more conditions to add later
+						if (!this.name || !this.tag) { // more conditions to add later
 							new Notice("Please enter a name.", 2000);
-						} else {
+						}
+						else {
 							this.onSubmit(this.name, this.tag);
 							this.close();
 						}
@@ -91,6 +95,35 @@ export class NewWrapperModal extends Modal {
 		const { contentEl } = this;
 		contentEl.empty();
 	}
+}
+
+
+const checkbox = (
+	modal: NewWrapperModal,
+	contentEl: HTMLElement,
+	text: string,
+) => {
+	const { plugin } = modal;
+	const { settings } = plugin;
+
+	contentEl.createDiv({ text: text, cls: "qsw-checkbox-cont" }, (el) => {
+		el.createEl("input",
+			{
+				attr: {
+					cls: "qsw-checkbox",
+					type: "checkbox",
+					checked: settings.runNext
+				}
+			}, (checkbox) => {
+				checkbox
+					.checked = settings.runNext
+				checkbox.onchange = () => {
+					settings.runNext = checkbox.checked
+					plugin.saveSettings()
+					modal.onOpen()
+				}
+			})
+	});
 }
 
 

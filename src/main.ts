@@ -20,19 +20,18 @@ export default class QSWPlugin extends Plugin {
 
 			editorCallback: (editor: Editor) => {
 				new NewWrapperModal(this.app, this, async (name, tag) => {
-					await this.addWrapper(name, tag )
+					await this.addWrapper(editor, name, tag)
 				}).open();
 			},
 		});
 	}
 
-	async addWrapper(name: string, tag: string) {
+	async addWrapper(editor: Editor, name: string, tag: string) {
 		const { settings } = this;
 		const { names } = settings;
 		let id: string;
 		if (!names.includes(name)) {
 			id = this.generateKey();
-			console.log("id", id)
 			this.settings.wrappers[id] = {
 				id,
 				name,
@@ -50,6 +49,15 @@ export default class QSWPlugin extends Plugin {
 			}
 		}
 		await this.saveSettings();
+		if (this.settings.runNext) {
+			await this.modifyText(editor, tag)
+		}
+	}
+
+	async modifyText(editor: Editor, tag: string) {
+		let replacedTag = tag.replace(/\$SEL/g, editor.getSelection());
+		replacedTag = replacedTag.replace(/\$CLIPBOARD/g, await navigator.clipboard.readText());
+		editor.replaceSelection(replacedTag);
 	}
 
 	generateKey() {
