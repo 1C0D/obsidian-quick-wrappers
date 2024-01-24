@@ -17,7 +17,7 @@ export class CommonSuggest extends FuzzySuggestModal<string> {
 
     init() {
         this.names = this.modal.plugin.settings.names
-        this.setPlaceholder("Enter a new tag name to create or select one to modify")
+        this.setPlaceholder("New wrapper name or existing one to modify it.")
         this.setInstructions(instructions)
         this.emptyStateText = "Enter a new name";
     }

@@ -4,7 +4,6 @@ import { DEFAULT_SETTINGS } from "./types/variables";
 import { NewWrapperModal } from "./modal";
 
 
-
 export default class QSWPlugin extends Plugin {
 	settings: QSWSettings;
 
@@ -20,14 +19,14 @@ export default class QSWPlugin extends Plugin {
 			name: 'Create & add wrapper',
 
 			editorCallback: (editor: Editor) => {
-				new NewWrapperModal(this.app, this, async (name, startTag, endTag) => {
-					await this.addWrapper(name, startTag, endTag)
+				new NewWrapperModal(this.app, this, async (name, tag) => {
+					await this.addWrapper(name, tag )
 				}).open();
 			},
 		});
 	}
 
-	async addWrapper(name: string, startTag: string, endTag: string) {
+	async addWrapper(name: string, tag: string) {
 		const { settings } = this;
 		const { names } = settings;
 		let id: string;
@@ -37,8 +36,7 @@ export default class QSWPlugin extends Plugin {
 			this.settings.wrappers[id] = {
 				id,
 				name,
-				startTagInput: startTag,
-				endTagInput: endTag,
+				tagInput: tag,
 			}
 			names.push(name)
 		} else {
@@ -48,12 +46,9 @@ export default class QSWPlugin extends Plugin {
 			this.settings.wrappers[id!] = {
 				id: id!,
 				name,
-				startTagInput: startTag,
-				endTagInput: endTag,
+				tagInput: tag,
 			}
-
 		}
-
 		await this.saveSettings();
 	}
 

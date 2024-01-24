@@ -8,6 +8,5 @@ interface QSWSettings {
 interface Wrapper {
     id: string;
     name: string;
-    startTagInput: string;
-    endTagInput: string;
+    tagInput: string;
 }
