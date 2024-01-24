@@ -29,6 +29,7 @@ export class NewWrapperModal extends Modal {
 			.setName("Tag Name")
 			.addText(text => {
 				this.inputEl = text.inputEl
+				if (this.name) text.setValue(this.name) // if we do onOpen()
 				this.nameInput = text  // used in the fuzzy suggester
 				this.inputEl.onfocus = () => {
 					this.suggester.open();
@@ -40,10 +41,12 @@ export class NewWrapperModal extends Modal {
 
 		new Setting(contentEl)
 			.setName("Tag")
-			.setDesc("Enter $SEL surrounded by tag. Or $CLIPBOARD. You can add several markers and mix them")
+			.setDesc("Enter @SEL surrounded by tag. Or @CLIPB. You can add several markers and mix them")
 			.addTextArea(async text => {
 				let setTag = ""
 				const name = await this.getNameAsync(); // this.name undefined without a delay
+
+				//to prefill the tag if exists
 				for (const wrap of Object.values(this.plugin.settings.wrappers)) {
 					if (wrap.name === name) {
 						if (wrap.tagInput) {
@@ -54,7 +57,7 @@ export class NewWrapperModal extends Modal {
 					};
 				}
 				text
-					.setPlaceholder("```js\n$SEL\n```")
+					.setPlaceholder("```js\n@SEL\n```")
 					.setValue(setTag)
 					.onChange(async (value) => {
 						this.tag = value;
