@@ -3,7 +3,20 @@ import { Setting } from "obsidian";
 declare module "obsidian" {
     interface App {
         setting: Setting,
-        // commands: Commands;
+        commands: Commands;
+        registerCommands: () => void;
+        hotkeyManager: HotkeyManager;
+    }
+
+    interface HotkeyManager {
+        getHotkeys: (command: string) => KeymapInfo[];
+        removeHotkeys: (command: string) => void;
+    }
+
+    interface Commands { 
+        removeCommand: (commandId: string) => void;
+        commands: Record<string, Command>;
+        editorCommands: Record<string, Command>;
     }
 
     interface Setting extends Modal { 

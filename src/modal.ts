@@ -1,7 +1,8 @@
-import { App, Modal, Notice, Setting, TextComponent } from "obsidian";
+import { App, Modal, Notice, Setting, TextComponent, Command } from "obsidian";
 import QWPlugin from "./main";
 import { CommonSuggest } from "./suggester";
 import { getNameAsync } from "./utils";
+import { Console } from "./Console";
 
 type OnSubmitCallback = (name: string, tag: string) => void
 
@@ -46,6 +47,14 @@ export class NewWrapperModal extends Modal {
 							(wrapper) => wrapper.name === this.name
 						)?.id
 						delete settings.wrappers[id!]
+						// if just name and no command created yet,ok no error
+						const pluginId = this.plugin.manifest.id
+						const _id = pluginId + ":" + id;
+						this.app.commands.removeCommand(_id);
+						const hotkeys = this.app.hotkeyManager.getHotkeys(_id);
+						if (hotkeys) {
+							this.app.hotkeyManager.removeHotkeys(_id);
+						}
 						this.nameInput.setValue("")
 						this.name = ""
 						this.tag = ""
@@ -84,22 +93,22 @@ export class NewWrapperModal extends Modal {
 				text.inputEl.setAttr("cols", 30)
 			})
 
-		checkbox(this, contentEl, settings.runNext, "Run command after", (checkbox) => {
+		checkbox(contentEl, settings.runNext, "Run command after", (checkbox) => {
 			checkbox
 				.checked = settings.runNext
-			checkbox.onchange = () => {
+			checkbox.onchange = async () => {
 				settings.runNext = checkbox.checked
-				plugin.saveSettings()
+				await plugin.saveSettings()
 				this.onOpen()
 			}
 		})
 
-		checkbox(this, contentEl, settings.openHK, "Set Hotkey after", (checkbox) => {
+		checkbox(contentEl, settings.openHK, "Set Hotkey after", (checkbox) => {
 			checkbox
 				.checked = settings.openHK
-			checkbox.onchange = () => {
+			checkbox.onchange = async () => {
 				settings.openHK = checkbox.checked
-				plugin.saveSettings()
+				await plugin.saveSettings()
 				this.onOpen()
 			}
 		})
@@ -109,8 +118,10 @@ export class NewWrapperModal extends Modal {
 				b.setIcon("checkmark")
 					.setCta()
 					.onClick(() => {
-						if (!this.name || !this.tag) { // more conditions to add later
+						if (!this.name && this.tag) { // more conditions to add later
 							new Notice("Please enter a name.", 2000);
+						} else if (!this.tag && this.name) {
+							new Notice("Please enter a tag.", 2000);
 						}
 						else {
 							this.onSubmit(this.name, this.tag);
@@ -129,14 +140,11 @@ export class NewWrapperModal extends Modal {
 
 
 const checkbox = (
-	modal: NewWrapperModal,
 	contentEl: HTMLElement,
 	prop: boolean,
 	text: string,
 	cb: (checkbox: HTMLInputElement) => void
 ) => {
-	const { plugin } = modal;
-	const { settings } = plugin;
 
 	contentEl.createDiv({ text: text, cls: "qw-checkbox-cont" }, (el) => {
 		el.createEl("input",
@@ -146,7 +154,7 @@ const checkbox = (
 					type: "checkbox",
 					checked: prop
 				}
-			}, )
+			}, cb)
 	});
 }
 

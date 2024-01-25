@@ -11,6 +11,7 @@ change "tag" to "wrapper" ? it was not the best name
 improvements:
 add confirmation to delete button ? "delete this wrapper ?"
 order in suggester last used entries. (see repeat last command?)
+generer un id 100% sur
 */
 
 
@@ -22,6 +23,7 @@ import { CommonSuggest } from "./suggester";
 import { getNameAsync } from "./utils";
 import { createCommand } from "./command-creator";
 import { QWSettings } from "./types/global";
+import { Console } from "./Console";
 
 
 export default class QWPlugin extends Plugin {
@@ -73,6 +75,7 @@ export default class QWPlugin extends Plugin {
 	async wrapperManager(editor: Editor, name: string, tag: string) {
 		const { settings } = this;
 		const { names } = settings;
+		if (!name || !tag) return
 		let id: string;
 		if (!names.includes(name)) {
 			id = this.generateKey();
@@ -82,15 +85,14 @@ export default class QWPlugin extends Plugin {
 				tagInput: tag,
 			}
 			names.push(name)
-			
-			await createCommand(this, id!, name, tag)
-			
+			await createCommand(this, id, name, tag)
 		} else {
 			const id = Object.values(settings.wrappers).find(
 				(wrapper) => wrapper.name === name
 			)?.id
-			this.settings.wrappers[id!] = {
-				id: id!,
+			if(!id) return
+			this.settings.wrappers[id] = {
+				id: id,
 				name,
 				tagInput: tag,
 			}
@@ -154,7 +156,7 @@ export default class QWPlugin extends Plugin {
 
 			if (match && match[1]) {
 				const result = match[1];
-				console.log("match[1]", match[1])
+				Console.log("match[1]", match[1])
 				setTimeout(() => {
 					editor.replaceSelection(result);
 				}, 0);

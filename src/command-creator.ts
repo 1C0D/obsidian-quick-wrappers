@@ -1,6 +1,7 @@
 import { Command, Editor } from "obsidian";
 import QWPlugin from "./main";
 import { NewWrapperModal } from "./modal";
+import { Console } from "./Console";
 
 export const nothing = "added just to avoid error building plugin"
 
@@ -11,9 +12,9 @@ improvements: add a way to add icons (list?) svg list ? commander plugin help ? 
 
 export async function createCommand(modal: NewWrapperModal | QWPlugin, id: string, name: string, tag: string) {
     const _this = modal instanceof QWPlugin ? modal : modal.plugin
-    console.log("id", id)
-    console.log("name", name)
-    console.log("tag", tag)
+    Console.log("id", id)
+    Console.log("name", name)
+    Console.log("tag", tag)
 
     const command: Command = {
         id: id,
