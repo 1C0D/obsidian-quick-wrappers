@@ -31,8 +31,8 @@ export default class QSWPlugin extends Plugin {
 
 		// create a new wrapper
 		this.addCommand({
-			id: 'create-modify-wrapper',
-			name: 'Create modify wrapper',
+			id: 'create-modify-wrappers',
+			name: 'Create modify wrappers',
 
 			editorCallback: (editor: Editor) => {
 				new NewWrapperModal(this.app, this, async (name, tag) => {

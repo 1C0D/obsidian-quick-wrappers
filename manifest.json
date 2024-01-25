@@ -1,6 +1,6 @@
 {
-	"id": "quick-shortcuts-wrapper",
-	"name": "Quick Shortcuts Wrapper",
+	"id": "quick-shortcuts-wrappers",
+	"name": "Quick Shortcuts Wrappers",
 	"version": "0.0.4",
 	"minAppVersion": "0.15.0",
 	"description": "wrap with shortcuts reborn.",
