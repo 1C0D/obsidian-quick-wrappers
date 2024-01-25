@@ -1,6 +1,6 @@
 {
 	"name": "quick-shortcuts-wrappers",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "wrap with shortcuts reborn",
 	"main": "main.js",
 	"type": "module",
