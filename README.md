@@ -1,6 +1,6 @@
 # Obsidian Quick wrappers
 
-
+Create wrapper and add shortcut to it, to quickly surround your selection and/or clipboard content in the document.
 
 ## developpement
 
