@@ -1,6 +1,6 @@
 import { App, FuzzyMatch, FuzzySuggestModal, Notice } from "obsidian";
 import { NewWrapperModal } from "./modal";
-import QSWPlugin from "./main";
+import QWPlugin from "./main";
 
 const instructions = [
     { command: '↑↓', purpose: 'to navigate' },
@@ -12,13 +12,13 @@ const instructions = [
 export class CommonSuggest extends FuzzySuggestModal<string> {
     typed: string
     names: string[]
-    constructor(app: App, public modal: NewWrapperModal | QSWPlugin) {
+    constructor(app: App, public modal: NewWrapperModal | QWPlugin) {
         super(app);
         this.init()
     }
 
     init() {
-        this.names = this.modal instanceof QSWPlugin ? this.modal.settings.names : this.modal.plugin.settings.names
+        this.names = this.modal instanceof QWPlugin ? this.modal.settings.names : this.modal.plugin.settings.names
         this.setPlaceholder("New wrapper name or choose an existing one to modify it.")
         this.setInstructions(instructions)
         this.emptyStateText = "Enter a new name";//herited prop
@@ -43,7 +43,7 @@ export class CommonSuggest extends FuzzySuggestModal<string> {
     }
 
     renderSuggestion(item: FuzzyMatch<string>, el: HTMLElement) {
-        const wrappers = this.modal instanceof QSWPlugin ? this.modal.settings.wrappers : this.modal.plugin.settings.wrappers
+        const wrappers = this.modal instanceof QWPlugin ? this.modal.settings.wrappers : this.modal.plugin.settings.wrappers
         const id = Object.values(wrappers).find(
             (wrapper) => wrapper.name === item.item
         )?.id

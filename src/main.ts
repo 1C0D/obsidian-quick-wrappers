@@ -15,19 +15,19 @@ order in suggester last used entries. (see repeat last command?)
 
 
 import { Editor, Plugin } from "obsidian";
-import { QSWSettingTab } from "./settings";
+import { QWSettingTab } from "./settings";
 import { DEFAULT_SETTINGS } from "./types/variables";
 import { NewWrapperModal } from "./modal";
 import { CommonSuggest } from "./suggester";
 import { getNameAsync } from "./utils";
 
 
-export default class QSWPlugin extends Plugin {
-	settings: QSWSettings;
+export default class QWPlugin extends Plugin {
+	settings: QWSettings;
 	name: string;
 	async onload() {
 		await this.loadSettings();
-		this.addSettingTab(new QSWSettingTab(this.app, this));
+		this.addSettingTab(new QWSettingTab(this.app, this));
 
 		// create a new wrapper
 		this.addCommand({
@@ -158,7 +158,7 @@ export default class QSWPlugin extends Plugin {
 
 	generateKey() {
 		const pluginId = this.manifest.id;
-		const prefix = "qsw-";
+		const prefix = "qw-";
 		const timestamp = (Date.now() % 1000000).toString();
 		return pluginId + ":" + prefix + timestamp
 	}

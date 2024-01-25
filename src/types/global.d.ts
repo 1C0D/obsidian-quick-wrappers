@@ -1,6 +1,6 @@
 // declare module "obsidian" {}
 
-interface QSWSettings {
+interface QWSettings {
     names: string[];
     wrappers: Record<string, Wrapper>;
     runNext: boolean;

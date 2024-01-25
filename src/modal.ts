@@ -1,5 +1,5 @@
 import { App, Modal, Notice, Setting, TextComponent } from "obsidian";
-import QSWPlugin from "./main";
+import QWPlugin from "./main";
 import { CommonSuggest } from "./suggester";
 import { getNameAsync } from "./utils";
 
@@ -12,7 +12,7 @@ export class NewWrapperModal extends Modal {
 	suggester: CommonSuggest
 	nameInput: TextComponent
 
-	constructor(app: App, public plugin: QSWPlugin, public onSubmit: OnSubmitCallback,
+	constructor(app: App, public plugin: QWPlugin, public onSubmit: OnSubmitCallback,
 	) {
 		super(app);
 	}
@@ -117,11 +117,11 @@ const checkbox = (
 	const { plugin } = modal;
 	const { settings } = plugin;
 
-	contentEl.createDiv({ text: text, cls: "qsw-checkbox-cont" }, (el) => {
+	contentEl.createDiv({ text: text, cls: "qw-checkbox-cont" }, (el) => {
 		el.createEl("input",
 			{
 				attr: {
-					cls: "qsw-checkbox",
+					cls: "qw-checkbox",
 					type: "checkbox",
 					checked: settings.runNext
 				}

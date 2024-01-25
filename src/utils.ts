@@ -1,7 +1,7 @@
-import QSWPlugin from "./main";
+import QWPlugin from "./main";
 import { NewWrapperModal } from "./modal";
 
-export async function getNameAsync(modal: NewWrapperModal | QSWPlugin) {
+export async function getNameAsync(modal: NewWrapperModal | QWPlugin) {
     return new Promise((r) => {
         setTimeout(() => {
             const name = modal.name;

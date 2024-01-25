@@ -1,4 +1,4 @@
-export const DEFAULT_SETTINGS: QSWSettings = {
+export const DEFAULT_SETTINGS: QWSettings = {
     names: [],
     wrappers: {},
     runNext: true

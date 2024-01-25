@@ -1,4 +1,4 @@
-# Obsidian Quick Shortcuts wrappers
+# Obsidian Quick wrappers
 
 
 
