@@ -3,7 +3,7 @@
 	"name": "Quick Wrappers",
 	"version": "0.0.7",
 	"minAppVersion": "0.15.0",
-	"description": "Create wrapper and add shortcut to it, to quickly surround your selection and/or clipboard content in the document.",
+	"description": "Create wrappers and add shortcut to them, to quickly surround your selection and/or clipboard content in the document.",
 	"author": "1C0D & Mara-Li",
 	"authorUrl": "https://github.com/1C0D",
 	"isDesktopOnly": false

@@ -1,12 +1,12 @@
 /* command to create/modify wrapper, and apply it (optional)
-
 you can add markers like @SEL or @CLIPB to be replaced in the tag and mix them.
-
 
 TODO: 
 create commands to add shortcuts to tags
 Settings are missing. Mara Li? 
 Readme to be added
+selection back (cursor position)
+go crazy? multi cursors ?
 
 improvements:
 add confirmation to delete button ? "delete this wrapper ?"
@@ -42,7 +42,7 @@ export default class QWPlugin extends Plugin {
 		});
 		this.addCommand({
 			id: 'wrapper-chooser',
-			name: 'choose and apply a wrapper',
+			name: 'Choose and apply a wrapper',
 
 			editorCallback: async (editor: Editor) => {
 				await this.wrapperChooser(editor)

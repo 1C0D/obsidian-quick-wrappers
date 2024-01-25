@@ -1,7 +1,7 @@
 {
 	"name": "quick-wrappers",
 	"version": "0.0.7",
-	"description": "Create wrapper and add shortcut to it, to quickly surround your selection and/or clipboard content in the document.",
+	"description": "Create wrappers and add shortcut to them, to quickly surround your selection and/or clipboard content in the document.",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {

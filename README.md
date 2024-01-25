@@ -1,6 +1,20 @@
 # Obsidian Quick wrappers
 
-Create wrapper and add shortcut to it, to quickly surround your selection and/or clipboard content in the document.
+Create wrappers and add shortcut to them, to quickly surround your selection and/or clipboard content in the document.
+
+Commands:
+- Each new wrapper is creating a command and you can add a shortcut to it.
+- `"Create modify wrappers"` choose a wrapper name and create/modify/delete the wrapper and optionally apply it. It's a nice way to create/test/modify your wrapper.
+
+- `"Choose and apply a wrapper"` choose a wrapper name and apply it to document. You can revert a selection with already a wrapper on it.   
+e.g running several times on the selection: `text` → `"[text](text)"` → `text`.  
+    
+**Important**: you can add markers as @SEL (for selection) and "@CLIPB" (for clipboard) and mix them. You don't to remember this, itt's written in the description in the modal. example of wrapper:
+```
+[@SEL](@SEL)
+@CLIPB
+``` 
+(having a selection before and in the clipboard the content accompanying the wikilink)
 
 ## developpement
 
