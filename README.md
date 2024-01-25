@@ -4,7 +4,7 @@ Create wrappers and add shortcut to them, to quickly surround your selection and
 
 Commands:
 - Each new wrapper is creating a command and you can add a shortcut to it.
-- `"Create modify wrappers"` choose a wrapper name and create/modify/delete the wrapper and optionally apply it. It's a nice way to create/test/modify your wrapper.
+- `"Create modify wrappers"` choose a wrapper name and create/modify/delete the wrapper and then (checkbox options) apply it and open Hotkeys settings to set the hotkey. It's a nice way to create/test/modify your wrapper.
 
 - `"Choose and apply a wrapper"` choose a wrapper name and apply it to document. You can revert a selection with already a wrapper on it.   
 e.g running several times on the selection: `text` → `"[text](text)"` → `text`.  

@@ -2,11 +2,11 @@
 you can add markers like @SEL or @CLIPB to be replaced in the tag and mix them.
 
 TODO: 
-create commands to add shortcuts to tags
 Settings are missing. Mara Li? 
-Readme to be added
 selection back (cursor position)
 go crazy? multi cursors ?
+when suppr remove command
+change "tag" to "wrapper" ? it was not the best name
 
 improvements:
 add confirmation to delete button ? "delete this wrapper ?"
@@ -20,6 +20,8 @@ import { DEFAULT_SETTINGS } from "./types/variables";
 import { NewWrapperModal } from "./modal";
 import { CommonSuggest } from "./suggester";
 import { getNameAsync } from "./utils";
+import { createCommand } from "./command-creator";
+import { QWSettings } from "./types/global";
 
 
 export default class QWPlugin extends Plugin {
@@ -48,6 +50,13 @@ export default class QWPlugin extends Plugin {
 				await this.wrapperChooser(editor)
 			},
 		});
+
+		const wrappers = this.settings.wrappers
+
+		for (const obj of Object.keys(wrappers)) {
+			const { name, tagInput } = wrappers[obj];
+			createCommand(this, obj, name, tagInput)
+		}
 	}
 
 	async wrapperChooser(editor: Editor) {
@@ -57,11 +66,8 @@ export default class QWPlugin extends Plugin {
 		const id = Object.values(wrappers).find(
 			(wrapper) => wrapper.name === name
 		)?.id
-		console.log("name", name)
-		console.log("id", id)
 		const tag = wrappers[id!]?.tagInput || ""
-		console.log("tag", tag)
-		await this.modifyText(editor, tag)
+		await this.modifyText(editor, tag) // apply the wrapper
 	}
 
 	async wrapperManager(editor: Editor, name: string, tag: string) {
@@ -76,6 +82,9 @@ export default class QWPlugin extends Plugin {
 				tagInput: tag,
 			}
 			names.push(name)
+			
+			await createCommand(this, id!, name, tag)
+			
 		} else {
 			const id = Object.values(settings.wrappers).find(
 				(wrapper) => wrapper.name === name
@@ -85,11 +94,20 @@ export default class QWPlugin extends Plugin {
 				name,
 				tagInput: tag,
 			}
+			await this.saveSettings();
 		}
-		await this.saveSettings();
 		// execute the wrapper
 		if (this.settings.runNext) {
 			await this.modifyText(editor, tag)
+		}
+		if (this.settings.openHK) {
+			this.app.setting.open();
+			this.app.setting.openTabById("hotkeys");
+			const tab = this.app.setting.activeTab;
+			const pluginName = this.manifest.name
+			tab.searchComponent.inputEl.value = `${pluginName}: ${name}`;
+			tab.updateHotkeyVisibility();
+			tab.searchComponent.inputEl.blur();
 		}
 	}
 
@@ -157,10 +175,9 @@ export default class QWPlugin extends Plugin {
 	}
 
 	generateKey() {
-		const pluginId = this.manifest.id;
 		const prefix = "qw-";
 		const timestamp = (Date.now() % 1000000).toString();
-		return pluginId + ":" + prefix + timestamp
+		return prefix + timestamp
 	}
 
 	async loadSettings() {

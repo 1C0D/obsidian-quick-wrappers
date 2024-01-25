@@ -18,7 +18,8 @@ export class NewWrapperModal extends Modal {
 	}
 
 	onOpen() {
-		const { contentEl } = this;
+		const { contentEl, plugin } = this;
+		const { settings } = plugin;
 		contentEl.empty();
 
 		contentEl.createEl("h1", { text: "Create/Edit a wrapper" });
@@ -44,7 +45,7 @@ export class NewWrapperModal extends Modal {
 						const id = Object.values(this.plugin.settings.wrappers).find(
 							(wrapper) => wrapper.name === this.name
 						)?.id
-						delete this.plugin.settings.wrappers[id!]
+						delete settings.wrappers[id!]
 						this.nameInput.setValue("")
 						this.name = ""
 						this.tag = ""
@@ -83,7 +84,25 @@ export class NewWrapperModal extends Modal {
 				text.inputEl.setAttr("cols", 30)
 			})
 
-		checkbox(this, contentEl, "Apply tag on document on confirm")
+		checkbox(this, contentEl, settings.runNext, "Run command after", (checkbox) => {
+			checkbox
+				.checked = settings.runNext
+			checkbox.onchange = () => {
+				settings.runNext = checkbox.checked
+				plugin.saveSettings()
+				this.onOpen()
+			}
+		})
+
+		checkbox(this, contentEl, settings.openHK, "Set Hotkey after", (checkbox) => {
+			checkbox
+				.checked = settings.openHK
+			checkbox.onchange = () => {
+				settings.openHK = checkbox.checked
+				plugin.saveSettings()
+				this.onOpen()
+			}
+		})
 
 		new Setting(this.contentEl)
 			.addButton((b) => {
@@ -112,7 +131,9 @@ export class NewWrapperModal extends Modal {
 const checkbox = (
 	modal: NewWrapperModal,
 	contentEl: HTMLElement,
+	prop: boolean,
 	text: string,
+	cb: (checkbox: HTMLInputElement) => void
 ) => {
 	const { plugin } = modal;
 	const { settings } = plugin;
@@ -123,17 +144,9 @@ const checkbox = (
 				attr: {
 					cls: "qw-checkbox",
 					type: "checkbox",
-					checked: settings.runNext
+					checked: prop
 				}
-			}, (checkbox) => {
-				checkbox
-					.checked = settings.runNext
-				checkbox.onchange = () => {
-					settings.runNext = checkbox.checked
-					plugin.saveSettings()
-					modal.onOpen()
-				}
-			})
+			}, )
 	});
 }
 
