@@ -1,8 +1,16 @@
-/* with the command you can create a new wrapper, or modify it and apply it (optionally) to the editor 
+/* command to create/modify wrapper, and apply it (optional)
+
 you can add markers like @SEL or @CLIPB to be replaced in the tag and mix them.
-TODO: reverse tags to initial state
+
+
+TODO: 
+create commands to add shortcuts to tags
 Settings are missing. Mara Li? 
 Readme to be added
+
+improvements:
+add confirmation to delete button ? "delete this wrapper ?"
+order in suggester last used entries. (see repeat last command?)
 */
 
 
@@ -10,17 +18,20 @@ import { Editor, Plugin } from "obsidian";
 import { QSWSettingTab } from "./settings";
 import { DEFAULT_SETTINGS } from "./types/variables";
 import { NewWrapperModal } from "./modal";
+import { CommonSuggest } from "./suggester";
+import { getNameAsync } from "./utils";
 
 
 export default class QSWPlugin extends Plugin {
 	settings: QSWSettings;
+	name: string;
 	async onload() {
 		await this.loadSettings();
 		this.addSettingTab(new QSWSettingTab(this.app, this));
 
 		// create a new wrapper
 		this.addCommand({
-			id: 'quick-shortcuts-wrap',
+			id: 'create-modify-wrapper',
 			name: 'Create modify wrapper',
 
 			editorCallback: (editor: Editor) => {
@@ -29,6 +40,28 @@ export default class QSWPlugin extends Plugin {
 				}).open();
 			},
 		});
+		this.addCommand({
+			id: 'wrapper-chooser',
+			name: 'choose and apply a wrapper',
+
+			editorCallback: async (editor: Editor) => {
+				await this.wrapperChooser(editor)
+			},
+		});
+	}
+
+	async wrapperChooser(editor: Editor) {
+		new CommonSuggest(this.app, this).open()
+		const wrappers = this.settings.wrappers
+		const name = await getNameAsync(this);
+		const id = Object.values(wrappers).find(
+			(wrapper) => wrapper.name === name
+		)?.id
+		console.log("name", name)
+		console.log("id", id)
+		const tag = wrappers[id!]?.tagInput || ""
+		console.log("tag", tag)
+		await this.modifyText(editor, tag)
 	}
 
 	async wrapperManager(editor: Editor, name: string, tag: string) {

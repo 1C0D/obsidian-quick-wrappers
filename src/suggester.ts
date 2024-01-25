@@ -1,5 +1,6 @@
-import { App, FuzzySuggestModal, Notice } from "obsidian";
+import { App, FuzzyMatch, FuzzySuggestModal, Notice } from "obsidian";
 import { NewWrapperModal } from "./modal";
+import QSWPlugin from "./main";
 
 const instructions = [
     { command: '↑↓', purpose: 'to navigate' },
@@ -7,19 +8,20 @@ const instructions = [
     { command: 'esc', purpose: 'to dismiss' }
 ];
 
+
 export class CommonSuggest extends FuzzySuggestModal<string> {
     typed: string
     names: string[]
-    constructor(app: App, public modal: NewWrapperModal) {
+    constructor(app: App, public modal: NewWrapperModal | QSWPlugin) {
         super(app);
         this.init()
     }
 
     init() {
-        this.names = this.modal.plugin.settings.names
-        this.setPlaceholder("New wrapper name or existing one to modify it.")
+        this.names = this.modal instanceof QSWPlugin ? this.modal.settings.names : this.modal.plugin.settings.names
+        this.setPlaceholder("New wrapper name or choose an existing one to modify it.")
         this.setInstructions(instructions)
-        this.emptyStateText = "Enter a new name";
+        this.emptyStateText = "Enter a new name";//herited prop
     }
 
     getItems(): string[] {
@@ -34,8 +36,22 @@ export class CommonSuggest extends FuzzySuggestModal<string> {
     }
     onChooseItem(item: string, evt: MouseEvent | KeyboardEvent): void {
         new Notice(`Selected ${item}`);
-        this.modal.nameInput.setValue(item)
+        if (this.modal instanceof NewWrapperModal) {
+            this.modal.nameInput.setValue(item)
+        }
         this.modal.name = item
+    }
+
+    renderSuggestion(item: FuzzyMatch<string>, el: HTMLElement) {
+        const wrappers = this.modal instanceof QSWPlugin ? this.modal.settings.wrappers : this.modal.plugin.settings.wrappers
+        const id = Object.values(wrappers).find(
+            (wrapper) => wrapper.name === item.item
+        )?.id
+        const tag = wrappers[id!]?.tagInput || ""
+
+        console.log("item.item", item.item)
+        el.createEl("div", { text: item.item });
+        el.createEl("small", { text: tag });
     }
 
     isMatch(input: string, match: string) {
@@ -43,6 +59,7 @@ export class CommonSuggest extends FuzzySuggestModal<string> {
     }
 
     onClose(): void {
-        this.modal.onOpen()
+        if (this.modal instanceof NewWrapperModal)
+            this.modal.onOpen()
     }
 }

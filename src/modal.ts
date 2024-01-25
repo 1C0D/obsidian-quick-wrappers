@@ -1,12 +1,12 @@
 import { App, Modal, Notice, Setting, TextComponent } from "obsidian";
 import QSWPlugin from "./main";
 import { CommonSuggest } from "./suggester";
+import { getNameAsync } from "./utils";
 
 type OnSubmitCallback = (name: string, tag: string) => void
 
 export class NewWrapperModal extends Modal {
 	name: string
-	error: boolean
 	tag: string
 	inputEl: HTMLInputElement
 	suggester: CommonSuggest
@@ -17,16 +17,15 @@ export class NewWrapperModal extends Modal {
 		super(app);
 	}
 
-
 	onOpen() {
 		const { contentEl } = this;
 		contentEl.empty();
 
-		contentEl.createEl("h1", { text: "Create or Edit a wrapper" });
+		contentEl.createEl("h1", { text: "Create/Edit a wrapper" });
 
-		// add a button to delete name and setting. with confirmation
 		new Setting(contentEl)
 			.setName("Tag Name")
+			.setDesc("click in the text input to create or choose an existing wrapper")
 			.addText(text => {
 				this.inputEl = text.inputEl
 				if (this.name) text.setValue(this.name) // if we do onOpen()
@@ -35,16 +34,34 @@ export class NewWrapperModal extends Modal {
 					this.suggester.open();
 				}
 			})
-		this.suggester = new CommonSuggest(this.app, this);
 
+			//TODO: ask for confirmation on delete 
+			.addButton((b) => {
+				b
+					.setIcon("trash-2")
+					.onClick(async () => {
+						this.plugin.settings.names = this.plugin.settings.names.filter(n => n !== this.name)
+						const id = Object.values(this.plugin.settings.wrappers).find(
+							(wrapper) => wrapper.name === this.name
+						)?.id
+						delete this.plugin.settings.wrappers[id!]
+						this.nameInput.setValue("")
+						this.name = ""
+						this.tag = ""
+						this.onOpen();
+						await this.plugin.saveSettings()
+					})
+			})
+
+		this.suggester = new CommonSuggest(this.app, this);
 
 
 		new Setting(contentEl)
 			.setName("Tag")
-			.setDesc("Enter @SEL surrounded by tag. Or @CLIPB. You can add several markers and mix them")
+			.setDesc("Enter @SEL (selection) or @CLIPB (clipboard) surrounded by the tag. mixed markers and mutilines are ok")
 			.addTextArea(async text => {
 				let setTag = ""
-				const name = await this.getNameAsync(); // this.name undefined without a delay
+				const name = await getNameAsync(this); // this.name undefined without a delay
 
 				//to prefill the tag if exists
 				for (const wrap of Object.values(this.plugin.settings.wrappers)) {
@@ -64,9 +81,9 @@ export class NewWrapperModal extends Modal {
 					})
 				text.inputEl.setAttr("rows", 4)
 				text.inputEl.setAttr("cols", 30)
-			});
+			})
 
-		checkbox(this, contentEl, "Then apply tag on document")
+		checkbox(this, contentEl, "Apply tag on document on confirm")
 
 		new Setting(this.contentEl)
 			.addButton((b) => {
@@ -82,15 +99,6 @@ export class NewWrapperModal extends Modal {
 						}
 					});
 			})
-	}
-
-	async getNameAsync() {
-		return new Promise((r) => {
-			setTimeout(() => {
-				const name = this.name;
-				r(name);
-			}, 0);
-		});
 	}
 
 
