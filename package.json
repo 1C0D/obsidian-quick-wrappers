@@ -15,7 +15,7 @@
 		"test": "tsx scripts/test-plugin.mts"
 	},
 	"keywords": [],
-	"author": "1C0D & Mara-Li",
+	"author": "1C0D ",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/fs-extra": "^11.0.4",

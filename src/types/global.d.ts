@@ -28,8 +28,8 @@ declare module "obsidian" {
 interface QWSettings {
     names: string[];
     wrappers: Record<string, Wrapper>;
-    runNext: boolean;
-    openHK: boolean;
+    // runNext: boolean;
+    // openHK: boolean;
 }
 
 interface Wrapper {
