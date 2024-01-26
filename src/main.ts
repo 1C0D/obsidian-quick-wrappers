@@ -27,7 +27,7 @@ import { Console } from "./Console";
 export default class QWPlugin extends Plugin {
 	settings: QWSettings;
 	name: string;
-	length: number=0;
+	length: number = 0;
 	async onload() {
 		await this.loadSettings();
 		this.addSettingTab(new QWSettingTab(this.app, this));
@@ -116,6 +116,7 @@ export default class QWPlugin extends Plugin {
 	}
 
 	async modifyText(editor: Editor, tag: string) {
+		const cursor = editor.getCursor();
 		const selection = editor.getSelection();
 		const from = editor.getCursor("from");
 		console.log("from", from)
@@ -134,10 +135,16 @@ export default class QWPlugin extends Plugin {
 		} else {
 			this.toggleTag(editor, tag);
 		}
-		// const length = await getLengthAsync(this);
-		console.log("length", this.length)
-		const tos = fos+this.length // to offset
-		// editor.setSelection(editor.offsetToPos(fos), editor.offsetToPos(tos))
+		const length = await getLengthAsync(this);
+		console.log("length", length)
+		const tos = fos + length // to offset
+		await this.setSelectionProm(editor, fos, tos);
+	}
+
+	async setSelectionProm(editor: Editor, fos: number, tos: number) {
+		setTimeout(() => {
+			editor.setSelection(editor.offsetToPos(fos), editor.offsetToPos(tos))
+		}, 50);
 	}
 
 	toggleTag(editor: Editor, tag: string) {

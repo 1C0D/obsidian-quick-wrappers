@@ -6,7 +6,7 @@ export async function getNameAsync(modal: NewWrapperModal | QWPlugin):Promise<st
         setTimeout(() => {
             const name = modal.name;
             r(name);
-        }, 0);
+        }, 50);
     });
 }
 
@@ -15,6 +15,6 @@ export async function getLengthAsync(modal:  QWPlugin): Promise<number> {
         setTimeout(() => {
             const length = modal.length;
             r(length);
-        }, 0);
+        }, 50);
     });
 }
