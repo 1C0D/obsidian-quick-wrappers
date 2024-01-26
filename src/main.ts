@@ -1,17 +1,15 @@
 /* command to create/modify wrapper, and apply it (optional)
-you can add markers like @SEL or @CLIPB to be replaced in the tag and mix them.
+bug on restart ! not registered
 
 TODO: 
-Settings are missing. Mara Li? 
+Settings are missing.
 selection back (cursor position)
 go crazy? multi cursors ?
-when suppr remove command
-change "tag" to "wrapper" ? it was not the best name
 
 improvements:
 add confirmation to delete button ? "delete this wrapper ?"
 order in suggester last used entries. (see repeat last command?)
-generer un id 100% sur
+generer un id 100% sûr
 */
 
 
@@ -20,7 +18,7 @@ import { QWSettingTab } from "./settings";
 import { DEFAULT_SETTINGS } from "./types/variables";
 import { NewWrapperModal } from "./modal";
 import { CommonSuggest } from "./suggester";
-import { getNameAsync } from "./utils";
+import { getLengthAsync, getNameAsync } from "./utils";
 import { createCommand } from "./command-creator";
 import { QWSettings } from "./types/global";
 import { Console } from "./Console";
@@ -29,6 +27,7 @@ import { Console } from "./Console";
 export default class QWPlugin extends Plugin {
 	settings: QWSettings;
 	name: string;
+	length: number=0;
 	async onload() {
 		await this.loadSettings();
 		this.addSettingTab(new QWSettingTab(this.app, this));
@@ -75,6 +74,8 @@ export default class QWPlugin extends Plugin {
 	async wrapperManager(editor: Editor, name: string, tag: string) {
 		const { settings } = this;
 		const { names } = settings;
+		console.log("name", name)
+		console.log("tag", tag)
 		if (!name || !tag) return
 		let id: string;
 		if (!names.includes(name)) {
@@ -90,16 +91,17 @@ export default class QWPlugin extends Plugin {
 			const id = Object.values(settings.wrappers).find(
 				(wrapper) => wrapper.name === name
 			)?.id
-			if(!id) return
+			if (!id) return
 			this.settings.wrappers[id] = {
 				id: id,
 				name,
 				tagInput: tag,
 			}
-			await this.saveSettings();
 		}
+		await this.saveSettings();
 		// execute the wrapper
 		if (this.settings.runNext) {
+			this.length = 0
 			await this.modifyText(editor, tag)
 		}
 		if (this.settings.openHK) {
@@ -115,11 +117,27 @@ export default class QWPlugin extends Plugin {
 
 	async modifyText(editor: Editor, tag: string) {
 		const selection = editor.getSelection();
+		const from = editor.getCursor("from");
+		console.log("from", from)
+		const to = editor.getCursor("to");
+		console.log("to", to)
+		const start = {
+			line: Math.min(from.line, to.line),
+			ch: Math.min(from.ch, to.ch),
+		}
+		console.log("start", start)
+		const fos = editor.posToOffset(start)
+		console.log("fos", fos)
+
 		if (!selection) {
 			await this.addTag(editor, tag);
 		} else {
 			this.toggleTag(editor, tag);
 		}
+		// const length = await getLengthAsync(this);
+		console.log("length", this.length)
+		const tos = fos+this.length // to offset
+		// editor.setSelection(editor.offsetToPos(fos), editor.offsetToPos(tos))
 	}
 
 	toggleTag(editor: Editor, tag: string) {
@@ -128,6 +146,7 @@ export default class QWPlugin extends Plugin {
 			if (selection === tag) {
 				editor.replaceSelection("")
 			} else {
+				this.length = tag.length
 				editor.replaceSelection(tag)
 			}
 		} else {
@@ -157,6 +176,7 @@ export default class QWPlugin extends Plugin {
 			if (match && match[1]) {
 				const result = match[1];
 				Console.log("match[1]", match[1])
+				this.length = result.length
 				setTimeout(() => {
 					editor.replaceSelection(result);
 				}, 0);
@@ -173,6 +193,7 @@ export default class QWPlugin extends Plugin {
 	async addTag(editor: Editor, tag: string) {
 		let replacedTag = tag.replace(/\@SEL/g, editor.getSelection());
 		replacedTag = replacedTag.replace(/\@CLIPB/g, await navigator.clipboard.readText());
+		this.length = replacedTag.length;
 		editor.replaceSelection(replacedTag);
 	}
 

@@ -9,3 +9,12 @@ export async function getNameAsync(modal: NewWrapperModal | QWPlugin):Promise<st
         }, 0);
     });
 }
+
+export async function getLengthAsync(modal:  QWPlugin): Promise<number> {
+    return new Promise((r) => {
+        setTimeout(() => {
+            const length = modal.length;
+            r(length);
+        }, 0);
+    });
+}

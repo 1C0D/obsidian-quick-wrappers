@@ -19,7 +19,7 @@ export class CommonSuggest extends FuzzySuggestModal<string> {
 
     init() {
         this.names = this.modal instanceof QWPlugin ? this.modal.settings.names : this.modal.plugin.settings.names
-        this.setPlaceholder("New wrapper name or choose an existing one to modify it.")
+        this.setPlaceholder("New name to create wrapper else edit existing one.")
         this.setInstructions(instructions)
         this.emptyStateText = "Enter a new name";//herited prop
     }
