@@ -1,7 +1,7 @@
 {
 	"id": "quick-wrappers",
 	"name": "Quick Wrappers",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"minAppVersion": "0.15.0",
 	"description": "Create wrappers and add shortcut to them, to quickly surround your selection and/or clipboard content in the document.",
 	"author": "1C0D & Mara-Li",
