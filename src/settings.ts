@@ -1,6 +1,12 @@
+/* 
+add hk button
+if hotkey show it
+*/
+
+
 import { PluginSettingTab, Setting } from "obsidian";
 import QWPlugin from "./main";
-import {  sortSettings } from "./utils";
+import { sortSettings } from "./utils";
 import wrapperModal from "./creator-modal";
 import { Console } from "./Console";
 import { Wrapper } from "./types/global";
@@ -18,7 +24,7 @@ export class QWSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Create a New Wrapper")
-			.setDesc("You can add some @SEL or @CLIPB to include selection or clipboard content in your wrapper. go crazy")
+			.setDesc("Add some @SEL and/or @CLIPB to include selection or clipboard content. go crazy")
 			.addButton(cb => {
 				cb.setIcon("plus")
 					.onClick(() => {
@@ -51,6 +57,18 @@ function wrapperSettings(_this: QWSettingTab, name: string, containerEl: HTMLEle
 	Console.log("matching Id", id)
 	if (!id) return
 	const wrapper = wrappers[id];
+	const pluginId = _this.plugin.manifest.id
+	const _id = pluginId + ":" + id;
+	const hotkey = this.app.hotkeyManager.getHotkeys(_id)?.[0];
+	let shortcut = "";
+	let nameHK = ""
+	if (hotkey) {
+		const key = hotkey.key;
+		const modif = hotkey.modifiers;
+		shortcut = `${modif.join("+")}+${key}`;
+		if (hotkey) nameHK = name + ` [${shortcut}]`;
+	}
+
 	const desc = createFragment((descEl) => {
 		wrapper.tagInput.split("\n").forEach((line) => {
 			const div = descEl.createEl("div");
@@ -58,7 +76,7 @@ function wrapperSettings(_this: QWSettingTab, name: string, containerEl: HTMLEle
 		})
 	})
 	new Setting(containerEl)
-		.setName(name)
+		.setName(hotkey ? nameHK : name)
 		.setDesc(desc)
 		.addExtraButton(bt => {
 			bt.setIcon("pencil");
@@ -70,6 +88,21 @@ function wrapperSettings(_this: QWSettingTab, name: string, containerEl: HTMLEle
 					Console.log("tagInput", tagInput)
 					_this.display()
 				}, wrapper).open();
+			})
+		})
+
+		.addExtraButton(bt => {
+			bt.setIcon("keyboard");
+			bt.onClick(async () => {
+				_this.app.setting.open();
+				_this.app.setting.openTabById("hotkeys");
+				const tab = _this.app.setting.activeTab;
+				const pluginName = _this.plugin.manifest.name
+				const text = `${pluginName}: ${name}`;
+				Console.log("text", text)
+				tab.searchComponent.inputEl.value = text;
+				await tab.updateHotkeyVisibility();
+				await tab.searchComponent.inputEl.blur();
 			})
 		})
 		.addExtraButton(bt => {
