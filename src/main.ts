@@ -1,5 +1,5 @@
 /* 
-bug suggestor selecting item by typing
+bug selection after applying tag
 add icons? (seems complicated see other plugins)
 */
 
@@ -16,7 +16,6 @@ import { WrappersManager } from "./wrappers-manager";
 export default class QWPlugin extends Plugin {
 	settings: QWSettings;
 	length = 0
-	// name= ""
 
 	async onload() {
 		await this.loadSettings();

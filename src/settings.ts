@@ -5,6 +5,7 @@ import wrapperModal from "./creator-modal";
 import { Console } from "./Console";
 import { Wrapper } from "./types/global";
 import { WrappersManager } from "./wrappers-manager";
+import { createCommand } from "./command-creator";
 
 export class QWSettingTab extends PluginSettingTab {
 	constructor(public plugin: QWPlugin) {
@@ -78,6 +79,13 @@ export function wrapperSettings(_this: QWSettingTab | WrappersManager, name: str
 			bt.onClick(async () => {
 				new wrapperModal(_this.plugin, async (newWrapper, editmode) => {
 					if (!editmode) return
+					// || modif command & hotkey
+					const pluginId = _this.plugin.manifest.id
+					const _id = pluginId + ":" + id;
+					// ouch !
+					this.app.commands.removeCommand(_id);
+					await createCommand(_this.plugin, id, newWrapper.name, newWrapper.tagInput)
+
 					_this instanceof QWSettingTab ? _this.display() : _this.onOpen()
 				}, wrapper).open();
 			})
