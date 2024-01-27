@@ -30,6 +30,7 @@ export class QWSettingTab extends PluginSettingTab {
 					.onClick(() => {
 						new wrapperModal(this.plugin, async (wrapper) => {
 							Console.log("wrapper", wrapper)
+
 							this.display()
 						}).open()
 					})
@@ -83,9 +84,6 @@ function wrapperSettings(_this: QWSettingTab, name: string, containerEl: HTMLEle
 			bt.onClick(async () => {
 				new wrapperModal(_this.plugin, async (newWrapper, editmode) => {
 					if (!editmode) return
-					const { name, tagInput } = newWrapper
-					Console.log("name", name)
-					Console.log("tagInput", tagInput)
 					_this.display()
 				}, wrapper).open();
 			})
@@ -99,7 +97,6 @@ function wrapperSettings(_this: QWSettingTab, name: string, containerEl: HTMLEle
 				const tab = _this.app.setting.activeTab;
 				const pluginName = _this.plugin.manifest.name
 				const text = `${pluginName}: ${name}`;
-				Console.log("text", text)
 				tab.searchComponent.inputEl.value = text;
 				await tab.updateHotkeyVisibility();
 				await tab.searchComponent.inputEl.blur();
@@ -109,6 +106,13 @@ function wrapperSettings(_this: QWSettingTab, name: string, containerEl: HTMLEle
 			bt.setIcon("trash");
 			bt.onClick(async () => {
 				delete _this.plugin.settings.wrappers[id];
+				const pluginId = _this.plugin.manifest.id
+				const _id = pluginId + ":" + id;
+				_this.app.commands.removeCommand(_id);
+				const hotkeys = _this.app.hotkeyManager.getHotkeys(_id);
+				if (hotkeys) {
+					await this.app.hotkeyManager.removeHotkeys(_id);
+				}
 				await _this.plugin.saveSettings();
 				_this.display();
 			})

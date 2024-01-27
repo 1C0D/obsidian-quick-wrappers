@@ -4,6 +4,7 @@ import { OnSubmitCallback } from "./types/variables";
 import { Wrapper } from "./types/global";
 import { generateId } from "./utils";
 import { Console } from "./Console";
+import { createCommand } from "./command-creator";
 
 export default class wrapperModal extends Modal {
     editMode: boolean;
@@ -11,7 +12,6 @@ export default class wrapperModal extends Modal {
     ) {
         super(plugin.app);
         if (wrapper) {
-            // this.wrapper = wrapper;
             this.editMode = true;
         } else {
             this.wrapper = { id: generateId(plugin), name: '', tagInput: '' };
@@ -74,7 +74,6 @@ export default class wrapperModal extends Modal {
                         else {
                             if (this.editMode) {
                                 Console.log("ici")
-                                // this.plugin.settings.wrappers[id].name = name
                                 this.plugin.settings.wrappers[id].tagInput = tagInput
                                 Console.log("nameici", name)
                                 Console.log("oldNameici", oldName)
@@ -89,6 +88,7 @@ export default class wrapperModal extends Modal {
                                 Console.log("là")
                                 this.plugin.settings.wrappers[id] = this.wrapper!
                                 this.plugin.settings.names.push(this.wrapper!.name)
+                                await createCommand(this, id, name, tagInput)
                             }
 
                             await this.plugin.saveSettings()

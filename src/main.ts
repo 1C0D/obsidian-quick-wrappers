@@ -1,3 +1,8 @@
+/* 
+create a replica of settings in a modal. that's just easier to see on tablets
+do back the suggester so only one shortcut to call the suggester can be used
+add icons? (seems complicated see other plugins)
+*/
 
 import { Editor, Plugin } from "obsidian";
 import { QWSettingTab } from "./settings";
