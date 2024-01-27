@@ -34,9 +34,10 @@ export class CommonSuggest extends FuzzySuggestModal<string> {
 
     getItems(): string[] {
         const inputName = this.inputEl.value;
-        if (inputName.length == 0 || this.names.filter(name => this.isMatch(name, inputName)).length > 0) return this.names
-        return []
-
+        if (inputName.length == 0 ) {
+            return this.names
+        }
+        return this.names.filter(name => name.toLowerCase().includes(inputName.toLowerCase()))
     }
 
     getItemText(item: string): string {
