@@ -20,7 +20,7 @@ export class WrappersManager extends Modal {
 
         new Setting(contentEl)
             .setName("Create a New Wrapper")
-            .setDesc("Add some ||sel and/or ||cb to include selection or clipboard content. go crazy")
+            .setDesc("Add some @@sel and/or @@cb to include selection or clipboard content. go crazy")
             .addButton(cb => {
                 cb.setIcon("plus")
                     .onClick(() => {

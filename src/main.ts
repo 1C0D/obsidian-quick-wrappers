@@ -75,14 +75,14 @@ export default class QWPlugin extends Plugin {
 	}
 
 	async addTag(editor: Editor, tag: string, selection: string) {
-		let replacedTag = tag.replace(/\||sel/g, selection);
-		replacedTag = replacedTag.replace(/\||cb/g, await navigator.clipboard.readText());
+		let replacedTag = tag.replace(/\@\@sel/g, selection);
+		replacedTag = replacedTag.replace(/\@\@cb/g, await navigator.clipboard.readText());
 		this.length = replacedTag.length;
 		editor.replaceSelection(replacedTag);
 	}
 
 	toggleTag(editor: Editor, tag: string, selection: string) {
-		if (!this.getMarkers(tag).length) {
+		if (!this.getMarkers(tag)?.length) {
 			if (selection === tag) {
 				editor.replaceSelection("")
 			} else {
@@ -99,15 +99,15 @@ export default class QWPlugin extends Plugin {
 	}
 
 	getMarkers(tag: string) {
-		const markers = tag.match(/\||sel|\||cb/g) || [];
+		const markers = tag.match(/\@\@sel|\@\@cb/g) || [];
 		return markers;
 	}
 
 	getMatchedTag(tag: string, selection: string) {
-		if (tag.includes('||sel')) {
+		if (tag.includes('@@sel')) {
 			const escapedTag = tag.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 
-			let taggedTag = escapedTag.replace(/||sel/g, '(.*)').replace(/||cb/g, '.*');
+			let taggedTag = escapedTag.replace(/@@sel/g, '(.*)').replace(/@@cb/g, '.*');
 
 			const regex = new RegExp(taggedTag);
 			return selection.match(regex);
@@ -115,7 +115,7 @@ export default class QWPlugin extends Plugin {
 	}
 
 	removeTag(editor: Editor, tag: string, selection: string) {
-		if (tag.includes('||sel')) {
+		if (tag.includes('@@sel')) {
 			const match = this.getMatchedTag(tag, selection);
 			if (match && match[1]) {
 				this.length = match[1].length

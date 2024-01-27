@@ -2,14 +2,14 @@
 
 this plugin is highly inspired by "wrap with shortcuts". However, the author was not responsive to pull requests.
 
-Create some wrappers to surround your selection or even clipboard content using some markers ||sel or ||cb.   
+Create some wrappers to surround your selection or even clipboard content using some markers @@sel or @@cb.   
 You can add several markers and mix them, on several lines.   
 You can then reverse the operation.  
 ADD A DEMO
 
 Quickly create advanced wrappers from **Wrapper Manager** 
 ![wm](./assets/Wrapper_Manager.png)
-or from **settings**
+or from **Settings**
 ![wm](./assets/settings.png)
 
 Add shortcut to each wrapper or call them from the **Wrapper Selector** you can spare a lot of shortcuts...
@@ -17,8 +17,8 @@ Add shortcut to each wrapper or call them from the **Wrapper Selector** you can 
 
 e.g:
 ```
-[||sel](||cb)
-||cb
+[@@sel](@@cb)
+@@cb
 ```
 
 
