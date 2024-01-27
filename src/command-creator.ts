@@ -16,8 +16,8 @@ export async function createCommand(modal: QWPlugin | wrapperModal, id: string, 
         name: name,
         editorCallback: async (editor: Editor) => await _this.modifyText(editor, tag)
     };
-    console.log("command", command)
-    console.log("tag", tag);
+    Console.log("command", command)
+    Console.log("tag", tag);
     _this.addCommand(command);
 }
 

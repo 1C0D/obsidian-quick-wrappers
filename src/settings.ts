@@ -104,9 +104,11 @@ export function wrapperSettings(_this: QWSettingTab | WrappersManager, name: str
 				await tab.updateHotkeyVisibility();
 				await tab.searchComponent.inputEl.blur();
 				// to update hotkeys view in the WrappersManager
+				const old = setting.onClose
 				setting.onClose = () => {
 					if (_this instanceof WrappersManager) _this.onOpen();
-					setting.onClose = () => { }
+					setting.onClose = old
+					return setting.onClose()
 				}
 			})
 		})
