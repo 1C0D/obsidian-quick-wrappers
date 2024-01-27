@@ -1,20 +1,14 @@
-/* 
-add hk button
-if hotkey show it
-*/
-
-
 import { PluginSettingTab, Setting } from "obsidian";
 import QWPlugin from "./main";
 import { sortSettings } from "./utils";
 import wrapperModal from "./creator-modal";
 import { Console } from "./Console";
 import { Wrapper } from "./types/global";
+import { WrappersManager } from "./wrappers-manager";
 
 export class QWSettingTab extends PluginSettingTab {
 	constructor(public plugin: QWPlugin) {
 		super(plugin.app, plugin);
-		this.plugin = plugin;
 	}
 
 	display(): void {
@@ -24,7 +18,7 @@ export class QWSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Create a New Wrapper")
-			.setDesc("Add some @SEL and/or @CLIPB to include selection or clipboard content. go crazy")
+			.setDesc("Add some ||sel and/or ||cb to include selection or clipboard content. go crazy")
 			.addButton(cb => {
 				cb.setIcon("plus")
 					.onClick(() => {
@@ -46,7 +40,7 @@ export class QWSettingTab extends PluginSettingTab {
 	}
 }
 
-function wrapperSettings(_this: QWSettingTab, name: string, containerEl: HTMLElement, wrappers: Record<string, Wrapper>) {
+export function wrapperSettings(_this: QWSettingTab | WrappersManager, name: string, containerEl: HTMLElement, wrappers: Record<string, Wrapper>) {
 	if (!Object.values(wrappers).length) return
 	Console.log("name", name)
 	const filter = Object.values(wrappers).filter((w) => {
@@ -84,7 +78,7 @@ function wrapperSettings(_this: QWSettingTab, name: string, containerEl: HTMLEle
 			bt.onClick(async () => {
 				new wrapperModal(_this.plugin, async (newWrapper, editmode) => {
 					if (!editmode) return
-					_this.display()
+					_this instanceof QWSettingTab ? _this.display() : _this.onOpen()
 				}, wrapper).open();
 			})
 		})
@@ -92,20 +86,27 @@ function wrapperSettings(_this: QWSettingTab, name: string, containerEl: HTMLEle
 		.addExtraButton(bt => {
 			bt.setIcon("keyboard");
 			bt.onClick(async () => {
-				_this.app.setting.open();
-				_this.app.setting.openTabById("hotkeys");
-				const tab = _this.app.setting.activeTab;
+				const setting = _this.app.setting
+				setting.open();
+				setting.openTabById("hotkeys");
+				const tab = setting.activeTab;
 				const pluginName = _this.plugin.manifest.name
 				const text = `${pluginName}: ${name}`;
 				tab.searchComponent.inputEl.value = text;
 				await tab.updateHotkeyVisibility();
 				await tab.searchComponent.inputEl.blur();
+				// to update hotkeys view in the WrappersManager
+				setting.onClose = () => {
+					if (_this instanceof WrappersManager) _this.onOpen();
+					setting.onClose = () => { }
+				}
 			})
 		})
 		.addExtraButton(bt => {
 			bt.setIcon("trash");
 			bt.onClick(async () => {
 				delete _this.plugin.settings.wrappers[id];
+				_this.plugin.settings.names = _this.plugin.settings.names.filter((n) => n !== name);
 				const pluginId = _this.plugin.manifest.id
 				const _id = pluginId + ":" + id;
 				_this.app.commands.removeCommand(_id);
@@ -114,7 +115,7 @@ function wrapperSettings(_this: QWSettingTab, name: string, containerEl: HTMLEle
 					await this.app.hotkeyManager.removeHotkeys(_id);
 				}
 				await _this.plugin.saveSettings();
-				_this.display();
+				_this instanceof QWSettingTab ? _this.display() : _this.onOpen();
 			})
 		})
 }

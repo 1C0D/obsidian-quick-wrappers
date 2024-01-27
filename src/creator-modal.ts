@@ -36,8 +36,8 @@ export default class wrapperModal extends Modal {
 
         new Setting(el)
             .setName('Wrapper name')
-            .addText((cb) => {
-                cb.setValue(this.wrapper!.name)
+            .addText((txt) => {
+                txt.setValue(this.wrapper!.name)
                     .onChange(value => {
                         this.wrapper!.name = value.trim();
                     })
@@ -45,18 +45,20 @@ export default class wrapperModal extends Modal {
 
         new Setting(el)
             .setName('Set Tag')
-            .setDesc("Enter @SEL (selection) or @CLIPB (clipboard) surrounded by the tag. mixed markers and mutilines are ok")
-            .addTextArea((cb) => {
-                cb.setValue(this.wrapper!.tagInput)
+            .setDesc("Enter ||sel (selection) or ||cb (clipboard) surrounded by the tag. mixed markers and mutilines ok")
+            .addTextArea((ta) => {
+                ta.setValue(this.wrapper!.tagInput)
                     .onChange(value => {
                         this.wrapper!.tagInput = value;
                     })
+                ta.inputEl.setAttr("rows", 4)
+                ta.inputEl.setAttr("cols", 30)
             })
 
 
         new Setting(this.contentEl)
-            .addButton((b) => {
-                b.setIcon("checkmark")
+            .addButton((btn) => {
+                btn.setIcon("checkmark")
                     .setCta()
                     .onClick(async () => {
                         const { name, id, tagInput } = this.wrapper!

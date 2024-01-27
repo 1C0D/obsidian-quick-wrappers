@@ -1,6 +1,5 @@
 /* 
-create a replica of settings in a modal. that's just easier to see on tablets
-do back the suggester so only one shortcut to call the suggester can be used
+bug suggestor selecting item by typing
 add icons? (seems complicated see other plugins)
 */
 
@@ -11,10 +10,13 @@ import { createCommand } from "./command-creator";
 import { QWSettings } from "./types/global";
 import { Console } from "./Console";
 import { asyncProp } from "./utils";
+import { wrapperChooser } from "./wrapper-chooser";
+import { WrappersManager } from "./wrappers-manager";
 
 export default class QWPlugin extends Plugin {
 	settings: QWSettings;
 	length = 0
+	// name= ""
 
 	async onload() {
 		await this.loadSettings();
@@ -26,6 +28,23 @@ export default class QWPlugin extends Plugin {
 				createCommand(this, id, name, tagInput)
 			}
 		}
+		this.addCommand({
+			id: 'wrapper-selector',
+			name: '--Wrappers Selector--',
+
+			editorCallback: async (editor: Editor) => {
+				await wrapperChooser(this, editor)
+			},
+		});
+		this.addCommand({
+			id: 'wrapper-manager',
+			name: '--Wrapper Manager--',
+
+			editorCallback: async (editor: Editor) => {
+				new WrappersManager(this).open()
+			},
+		});
+
 		this.addSettingTab(new QWSettingTab(this));
 	}
 
@@ -56,8 +75,8 @@ export default class QWPlugin extends Plugin {
 	}
 
 	async addTag(editor: Editor, tag: string, selection: string) {
-		let replacedTag = tag.replace(/\@SEL/g, selection);
-		replacedTag = replacedTag.replace(/\@CLIPB/g, await navigator.clipboard.readText());
+		let replacedTag = tag.replace(/\||sel/g, selection);
+		replacedTag = replacedTag.replace(/\||cb/g, await navigator.clipboard.readText());
 		this.length = replacedTag.length;
 		editor.replaceSelection(replacedTag);
 	}
@@ -80,15 +99,15 @@ export default class QWPlugin extends Plugin {
 	}
 
 	getMarkers(tag: string) {
-		const markers = tag.match(/\@SEL|\@CLIPB/g) || [];
+		const markers = tag.match(/\||sel|\||cb/g) || [];
 		return markers;
 	}
 
 	getMatchedTag(tag: string, selection: string) {
-		if (tag.includes('@SEL')) {
+		if (tag.includes('||sel')) {
 			const escapedTag = tag.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 
-			let taggedTag = escapedTag.replace(/@SEL/g, '(.*)').replace(/@CLIPB/g, '.*');
+			let taggedTag = escapedTag.replace(/||sel/g, '(.*)').replace(/||cb/g, '.*');
 
 			const regex = new RegExp(taggedTag);
 			return selection.match(regex);
@@ -96,7 +115,7 @@ export default class QWPlugin extends Plugin {
 	}
 
 	removeTag(editor: Editor, tag: string, selection: string) {
-		if (tag.includes('@SEL')) {
+		if (tag.includes('||sel')) {
 			const match = this.getMatchedTag(tag, selection);
 			if (match && match[1]) {
 				this.length = match[1].length
