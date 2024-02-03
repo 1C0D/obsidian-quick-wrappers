@@ -3,7 +3,6 @@ import QWPlugin from "./main";
 import { OnSubmitCallback } from "./types/variables";
 import { Wrapper } from "./types/global";
 import { generateId } from "./utils";
-import { Console } from "./Console";
 import { createCommand } from "./command-creator";
 
 export default class wrapperModal extends Modal {
@@ -31,9 +30,6 @@ export default class wrapperModal extends Modal {
 
         const { names } = this.plugin.settings
         const oldName = this.wrapper!.name
-        Console.log("this.editMode", this.editMode)
-        Console.log("name, id, tagInput", this.wrapper!.name, this.wrapper!.id, this.wrapper!.tagInput)
-
         new Setting(el)
             .setName('Wrapper name')
             .addText((txt) => {
@@ -62,10 +58,6 @@ export default class wrapperModal extends Modal {
                     .setCta()
                     .onClick(async () => {
                         const { name, id, tagInput } = this.wrapper!
-                        Console.log("this.wrapper!.name", name)
-                        Console.log("this.wrapper!.tagInput", tagInput)
-                        Console.log("this.wrapper!.id", id)
-
                         if (!name) {
                             new Notice("Please enter a name.", 2000);
                             return
@@ -75,19 +67,14 @@ export default class wrapperModal extends Modal {
                         }
                         else {
                             if (this.editMode) {
-                                Console.log("ici")
                                 this.plugin.settings.wrappers[id].tagInput = tagInput
-                                Console.log("nameici", name)
-                                Console.log("oldNameici", oldName)
                                 if (oldName !== name) {
-                                    Console.log("!=")
                                     this.plugin.settings.wrappers[id].name = name
                                     this.plugin.settings.names = names.filter(n => n !== oldName)
                                     this.plugin.settings.names.push(name)
 
                                 }
                             } else {
-                                Console.log("là")
                                 this.plugin.settings.wrappers[id] = this.wrapper!
                                 this.plugin.settings.names.push(this.wrapper!.name)
                                 await createCommand(this, id, name, tagInput)
@@ -95,7 +82,6 @@ export default class wrapperModal extends Modal {
 
                             await this.plugin.saveSettings()
                             this.onSubmit(this.wrapper!, this.editMode);
-                            Console.log("this.wrapper!", this.wrapper!)
                             this.close();
                         }
                     });

@@ -1,13 +1,5 @@
 import QWPlugin from "./main";
 
-export async function asyncProp(prop: any): Promise<string> {
-    return new Promise((r) => {
-        setTimeout(() => {
-            r(prop);
-        }, 50);
-    });
-}
-
 export function generateId(_this: QWPlugin): string {
     const prefix = "qw-";
     const timestamp = (Date.now() % 1000000).toString();

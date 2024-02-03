@@ -1,21 +1,13 @@
-/* 
-bug selection after applying tag
-add icons? (seems complicated see other plugins)
-*/
-
 import { Editor, Plugin } from "obsidian";
 import { QWSettingTab } from "./settings";
 import { DEFAULT_SETTINGS } from "./types/variables";
 import { createCommand } from "./command-creator";
 import { QWSettings } from "./types/global";
-import { Console } from "./Console";
-import { asyncProp } from "./utils";
 import { wrapperChooser } from "./wrapper-chooser";
 import { WrappersManager } from "./wrappers-manager";
 
 export default class QWPlugin extends Plugin {
 	settings: QWSettings;
-	length = 0
 
 	async onload() {
 		await this.loadSettings();
@@ -57,13 +49,13 @@ export default class QWPlugin extends Plugin {
 		}
 		const fos = editor.posToOffset(start)
 
+		let length = 0
 		if (!selection) {
-			await this.addTag(editor, tag, selection);
+			length = await this.addTag(editor, tag, selection);
 		} else {
-			this.toggleTag(editor, tag, selection);
+			length = await this.toggleTag(editor, tag, selection);
 		}
-		const length = await asyncProp(this.length);
-		const tos = fos + parseInt(length)
+		const tos = fos + length
 		this.setSelection(editor, fos, tos);
 	}
 
@@ -76,25 +68,28 @@ export default class QWPlugin extends Plugin {
 	async addTag(editor: Editor, tag: string, selection: string) {
 		let replacedTag = tag.replace(/\@\@sel/g, selection);
 		replacedTag = replacedTag.replace(/\@\@cb/g, await navigator.clipboard.readText());
-		this.length = replacedTag.length;
+		const length = replacedTag.length;
 		editor.replaceSelection(replacedTag);
+		return length
 	}
 
-	toggleTag(editor: Editor, tag: string, selection: string) {
+	async toggleTag(editor: Editor, tag: string, selection: string) {
+		let length = 0
 		if (!this.getMarkers(tag)?.length) {
 			if (selection === tag) {
 				editor.replaceSelection("")
 			} else {
-				this.length = tag.length
+				length = tag.length
 				editor.replaceSelection(tag)
 			}
 		} else {
 			if (this.getMatchedTag(tag, selection)) {
-				this.removeTag(editor, tag, selection)
+				length =  this.removeTag(editor, tag, selection)
 			} else {
-				this.addTag(editor, tag, selection)
+				length = await this.addTag(editor, tag, selection)
 			}
 		}
+		return length
 	}
 
 	getMarkers(tag: string) {
@@ -114,16 +109,17 @@ export default class QWPlugin extends Plugin {
 	}
 
 	removeTag(editor: Editor, tag: string, selection: string) {
+		let length = 0
 		if (tag.includes('@@sel')) {
 			const match = this.getMatchedTag(tag, selection);
 			if (match && match[1]) {
-				this.length = match[1].length
+				length = match[1].length
 				setTimeout(() => {
 					editor.replaceSelection(match[1]);
 				}, 0);
 			}
 		}
-		return;
+		return length;
 	}
 
 	async loadSettings() {

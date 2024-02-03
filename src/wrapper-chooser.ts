@@ -1,7 +1,6 @@
 import { Editor, FuzzyMatch, FuzzySuggestModal } from "obsidian";
 import QWPlugin from "./main";
 import { instructions } from "./types/variables";
-import { Console } from "./Console";
 
 export async function wrapperChooser(_this: QWPlugin, editor: Editor) {
     new CommonSuggest(_this, editor).open()
@@ -27,7 +26,6 @@ export class CommonSuggest extends FuzzySuggestModal<string> {
 
     init() {
         this.names = this.plugin.settings.names
-        Console.log("this.names", this.names)
         this.setInstructions(instructions)
         this.emptyStateText = "No wrapper found";//herited prop
     }

@@ -2,7 +2,6 @@ import { PluginSettingTab, Setting } from "obsidian";
 import QWPlugin from "./main";
 import { sortSettings } from "./utils";
 import wrapperModal from "./creator-modal";
-import { Console } from "./Console";
 import { Wrapper } from "./types/global";
 import { WrappersManager } from "./wrappers-manager";
 import { createCommand } from "./command-creator";
@@ -24,8 +23,6 @@ export class QWSettingTab extends PluginSettingTab {
 				cb.setIcon("plus")
 					.onClick(() => {
 						new wrapperModal(this.plugin, async (wrapper) => {
-							Console.log("wrapper", wrapper)
-
 							this.display()
 						}).open()
 					})
@@ -34,7 +31,6 @@ export class QWSettingTab extends PluginSettingTab {
 		sortSettings(this.plugin)
 
 		if (!names.length) return
-		Console.log("names", names)
 		for (const name of names) {
 			wrapperSettings(this, name, containerEl, wrappers)
 		}
@@ -43,14 +39,10 @@ export class QWSettingTab extends PluginSettingTab {
 
 export function wrapperSettings(_this: QWSettingTab | WrappersManager, name: string, containerEl: HTMLElement, wrappers: Record<string, Wrapper>) {
 	if (!Object.values(wrappers).length) return
-	Console.log("name", name)
 	const filter = Object.values(wrappers).filter((w) => {
-		Console.log("w", w)
 		return w.name === name
 	})
-	Console.log("filter", filter)
 	const id = filter[0]?.id
-	Console.log("matching Id", id)
 	if (!id) return
 	const wrapper = wrappers[id];
 	const pluginId = _this.plugin.manifest.id

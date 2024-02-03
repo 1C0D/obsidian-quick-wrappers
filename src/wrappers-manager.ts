@@ -1,10 +1,8 @@
 import { Modal, Setting } from "obsidian";
 import QWPlugin from "./main";
-import { Console } from "./Console";
 import wrapperModal from "./creator-modal";
 import { sortSettings } from "./utils";
 import { wrapperSettings } from "./settings";
-
 
 export class WrappersManager extends Modal {
     constructor(public plugin: QWPlugin) {
@@ -25,7 +23,6 @@ export class WrappersManager extends Modal {
                 cb.setIcon("plus")
                     .onClick(() => {
                         new wrapperModal(this.plugin, async (wrapper) => {
-                            Console.log("wrapper", wrapper)
                             this.onOpen()
                         }).open()
                     })
@@ -34,7 +31,6 @@ export class WrappersManager extends Modal {
         sortSettings(this.plugin)
 
         if (!names.length) return
-        Console.log("names", names)
         for (const name of names) {
             wrapperSettings(this, name, contentEl, wrappers)
         }
