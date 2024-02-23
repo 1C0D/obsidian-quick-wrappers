@@ -41,14 +41,14 @@ export default class wrapperModal extends Modal {
 
         new Setting(el)
             .setName('Set Tag')
-            .setDesc("Enter @@sel (selection) or @@cb (clipboard) surrounded by the tag. mixed markers and mutilines ok")
+            .setDesc("Enter @@sel (selection) or @@cb (clipboard) or @@MM-DD-YYYY or @@HH:MM:SS surrounded by the tag. mixed markers and mutilines ok")
             .addTextArea((ta) => {
                 ta.setValue(this.wrapper!.tagInput)
                     .onChange(value => {
                         this.wrapper!.tagInput = value;
                     })
                 ta.inputEl.setAttr("rows", 4)
-                ta.inputEl.setAttr("cols", 30)
+                ta.inputEl.setAttr("cols", 40)
             })
 
 
