@@ -1,1 +1,1 @@
-added markers time and date
+added time format and code improved
