@@ -5,9 +5,10 @@ this plugin is highly inspired by "wrap with shortcuts". However, the author was
 Create some wrappers to surround your selection or even clipboard content using some markers: 
 @@sel → selection  
 @@cb → clipboard   
-@@time → local time  
+@@DD-MM-YYYY (any date format)
 @@date → local date  
-@@DD-MM-YYYY (case insensitive, / or - as separator, invert day and month, YYYY or YY or no year)
+@@HH-MM-SS (any time format)
+@@time → local time  
 
 You can add several markers and mix them, on several lines. 
 e.g:

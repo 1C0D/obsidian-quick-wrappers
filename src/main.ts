@@ -1,4 +1,4 @@
-import { Editor, Plugin } from "obsidian";
+import { Editor, Plugin, moment } from "obsidian";
 import { QWSettingTab } from "./settings";
 import { DEFAULT_SETTINGS } from "./types/variables";
 import { createCommand } from "./command-creator";
@@ -69,27 +69,20 @@ export default class QWPlugin extends Plugin {
 		let replacedTag = tag.replace(/\@\@sel/g, selection);
 		replacedTag = replacedTag.replace(/\@\@cb/g, await navigator.clipboard.readText());
 
-		const datePattern = /\@\@([DdMm]{2})(-)([DdMm]{2})-?([Yy]{4}|[Yy]{2})?/;
+		const datePattern = /\@\@([DdMm]{2})([-/])([DdMm]{2})[-/]?([Yy]{4}|[Yy]{2})?/;
 		replacedTag = replacedTag.replace(datePattern, (_, p0, p1, p2, p3) => {
-			const date = new Date();
-			const day = date.getDate().toString().padStart(2, '0');
-			const month = (date.getMonth() + 1).toString().padStart(2, '0');
-			let year = date.getFullYear().toString();
-			const separator = p1.toString();
-			let newDateFormat;
-
-			if (p3?.toLowerCase() === "yy") { // 2024 -> 24
-				year = year.toString().slice(-2);
-			}
-			if (!p3) year = ""
-
-			if (p0.toLowerCase() === "dd") {
-				newDateFormat = p3 ? [day, month, year].join(separator) : [day, month].join(separator)
-			} else {
-				newDateFormat = p3 ? [month, day, year].join(separator) : [month, day].join(separator)
-			}
-			return newDateFormat;
+			const now = new Date();
+			const stamp = moment(now).format(_.slice(2));
+			return stamp
 		});
+
+		const timePattern = /\@\@([Hh]{2}):([Mm]{2}):([Ss]{2})/;
+		replacedTag = replacedTag.replace(timePattern, (_, p0, p1, p2) => {
+			const now = new Date();
+			const stamp = moment(now).format(_.slice(2));
+			return stamp
+		})
+		
 		replacedTag = replacedTag.replace(/\@\@date/g, new Date().toLocaleDateString());
 		replacedTag = replacedTag.replace(/\@\@time/g, new Date().toLocaleTimeString());
 		const length = replacedTag.length;
