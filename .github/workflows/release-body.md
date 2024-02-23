@@ -1,1 +1,1 @@
-selection back fixed and code cleaned from console.logs
+added markers time and date
