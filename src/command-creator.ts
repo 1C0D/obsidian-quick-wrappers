@@ -1,9 +1,6 @@
 import { Command, Editor } from "obsidian";
 import QWPlugin from "./main";
 import wrapperModal from "./creator-modal";
-
-export const nothing = "added just to avoid error building plugin"
-
 /* 
 improvements: add a way to add icons ?  
 */

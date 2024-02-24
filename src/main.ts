@@ -70,38 +70,27 @@ export default class QWPlugin extends Plugin {
 		let replacedTag = tag.replace(/\@\@sel/g, selection);
 		replacedTag = replacedTag.replace(/\@\@cb/g, await navigator.clipboard.readText());
 
-		const datePattern = /\@\@([DdMm]{2})([-/])([DdMm]{2})[-/]?([Yy]{4}|[Yy]{2})?/g;
-		replacedTag = replacedTag.replace(datePattern, (_, p0, p1, p2, p3) => {
+		// Date or time
+		const datePattern = /\@\@\(.+\)/g;
+		replacedTag = replacedTag.replace(datePattern, (_) => {
 			const now = new Date();
-			const formattedDate = moment(now).format(_.slice(2));
+			const format = _.slice(3, -1)
+			const formattedDate = moment(now).format(format);
 			return formattedDate
 		});
 
-		const timePattern = /\@\@([Hh]{2}):([Mm]{2}):([Ss]{2})/g;
-		replacedTag = replacedTag.replace(timePattern, (_, p0, p1, p2) => {
-			const now = new Date();
-			const formattedDate = moment(now).format(_.slice(2));
-			return formattedDate
-		})
-
-		const datePickerPattern = /\@\@\+([DdMm]{2})([-/])([DdMm]{2})[-/]?([Yy]{4}|[Yy]{2})?/g;
+		const datePickerPattern = /\@\@\+\(.+?\)/g;
 		const matchResult = replacedTag.match(datePickerPattern);
-		const format = matchResult ? matchResult[0].slice(3) : "";
 		if (matchResult) {
 			const dates: string[] = []
-			// because I can't put notice in a condition
-			if (matchResult.length<2) {
-				const format = matchResult[0].slice(3)
+
+			for (const item of matchResult) {
+				const format = item.slice(4, -1)
 				const date = await this.handleDatePicker(format);
+				if (matchResult.length > 1) new Notice(`${date}`, 2000);
 				dates.push(date)
-			}else{
-				for (const item of matchResult) {
-					const format = item.slice(3)
-					const date = await this.handleDatePicker(format);
-					new Notice(`${date}`, 2000);
-					dates.push(date)
-				}
 			}
+
 			for (const item of matchResult) {
 				const date = dates.shift() ?? "";
 				replacedTag = replacedTag!.replace(item, date);

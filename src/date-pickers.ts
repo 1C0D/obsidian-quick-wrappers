@@ -1,9 +1,10 @@
+// highlight choosen date ? 
 import { App, Modal } from "obsidian";
 import QWPlugin from "./main";
 import { Datepicker } from 'vanillajs-datepicker';
 // import { DatepickerOptions } from 'vanillajs-datepicker/Datepicker';
 
-
+// https://github.com/namikaze-40p/obsidian-date-inserter
 export class DatePicker extends Modal {
     constructor(app: App, public plugin: QWPlugin, public format: string, public cb: (date: string) => void) {
         super(app);
@@ -14,12 +15,10 @@ export class DatePicker extends Modal {
 
         const { contentEl } = this;
 
-        // Créer l'input
         const inputEl = contentEl.createEl('input');
         inputEl.addClass('invisible-input');
         inputEl.setAttrs({ type: 'text' });
 
-        // Initialiser le datepicker
         const datepicker = new Datepicker(inputEl, {
             autohide: true,
             format: this.format,

@@ -18,7 +18,7 @@ export class QWSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Create a New Wrapper")
-			.setDesc("markers: @@sel(selection), @@cb(clipboard), @@time, @@date, @@MM-DD-YYYY, @@HH-MM-SS")
+			.setDesc("markers: @@sel→selection, @@cb→clipboard, @@time, @@date, @@(dd MM-DD-YYYY HH:MM:SS)→date/time, @@+(dd MM-DD-YYYY)→date picker")
 			.addButton(cb => {
 				cb.setIcon("plus")
 					.onClick(() => {

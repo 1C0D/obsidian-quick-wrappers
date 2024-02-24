@@ -41,7 +41,7 @@ export default class wrapperModal extends Modal {
 
         new Setting(el)
             .setName('Set Tag')
-            .setDesc("markers: @@sel(selection), @@cb(clipboard), @@time, @@date, @@MM-DD-YYYY, @@HH-MM-SS")
+            .setDesc("markers: @@sel→selection, @@cb→clipboard, @@time, @@date, @@(dd MM-DD-YYYY HH:MM:SS)→date/time, @@+(dd MM-DD-YYYY)→date picker")
             .addTextArea((ta) => {
                 ta.setValue(this.wrapper!.tagInput)
                     .onChange(value => {
