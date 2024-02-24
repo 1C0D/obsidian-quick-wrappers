@@ -1,10 +1,11 @@
-import { Editor, Plugin, moment } from "obsidian";
+import { Editor, Notice, Plugin, moment } from "obsidian";
 import { QWSettingTab } from "./settings";
 import { DEFAULT_SETTINGS } from "./types/variables";
 import { createCommand } from "./command-creator";
 import { QWSettings } from "./types/global";
 import { wrapperChooser } from "./wrapper-chooser";
 import { WrappersManager } from "./wrappers-manager";
+import { DatePicker } from "src/date-pickers";
 
 export default class QWPlugin extends Plugin {
 	settings: QWSettings;
@@ -69,25 +70,57 @@ export default class QWPlugin extends Plugin {
 		let replacedTag = tag.replace(/\@\@sel/g, selection);
 		replacedTag = replacedTag.replace(/\@\@cb/g, await navigator.clipboard.readText());
 
-		const datePattern = /\@\@([DdMm]{2})([-/])([DdMm]{2})[-/]?([Yy]{4}|[Yy]{2})?/;
+		const datePattern = /\@\@([DdMm]{2})([-/])([DdMm]{2})[-/]?([Yy]{4}|[Yy]{2})?/g;
 		replacedTag = replacedTag.replace(datePattern, (_, p0, p1, p2, p3) => {
 			const now = new Date();
-			const stamp = moment(now).format(_.slice(2));
-			return stamp
+			const formattedDate = moment(now).format(_.slice(2));
+			return formattedDate
 		});
 
-		const timePattern = /\@\@([Hh]{2}):([Mm]{2}):([Ss]{2})/;
+		const timePattern = /\@\@([Hh]{2}):([Mm]{2}):([Ss]{2})/g;
 		replacedTag = replacedTag.replace(timePattern, (_, p0, p1, p2) => {
 			const now = new Date();
-			const stamp = moment(now).format(_.slice(2));
-			return stamp
+			const formattedDate = moment(now).format(_.slice(2));
+			return formattedDate
 		})
-		
+
+		const datePickerPattern = /\@\@\+([DdMm]{2})([-/])([DdMm]{2})[-/]?([Yy]{4}|[Yy]{2})?/g;
+		const matchResult = replacedTag.match(datePickerPattern);
+		const format = matchResult ? matchResult[0].slice(3) : "";
+		if (matchResult) {
+			const dates: string[] = []
+			// because I can't put notice in a condition
+			if (matchResult.length<2) {
+				const format = matchResult[0].slice(3)
+				const date = await this.handleDatePicker(format);
+				dates.push(date)
+			}else{
+				for (const item of matchResult) {
+					const format = item.slice(3)
+					const date = await this.handleDatePicker(format);
+					new Notice(`${date}`, 2000);
+					dates.push(date)
+				}
+			}
+			for (const item of matchResult) {
+				const date = dates.shift() ?? "";
+				replacedTag = replacedTag!.replace(item, date);
+			}
+		}
+
 		replacedTag = replacedTag.replace(/\@\@date/g, new Date().toLocaleDateString());
 		replacedTag = replacedTag.replace(/\@\@time/g, new Date().toLocaleTimeString());
 		const length = replacedTag.length;
 		editor.replaceSelection(replacedTag);
 		return length
+	}
+
+	async handleDatePicker(format: string): Promise<string> {
+		return new Promise<string>((resolve) => {
+			new DatePicker(this.app, this, format, (date) => {
+				resolve(date);
+			}).open();
+		});
 	}
 
 	async toggleTag(editor: Editor, tag: string, selection: string) {
