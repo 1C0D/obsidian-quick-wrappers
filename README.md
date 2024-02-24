@@ -17,7 +17,7 @@ e.g:
 @@date @@time
 ```  
 You can then reverse the operation.  
-[demo](./assets/demo.mp4)
+![demo](./assets/demo.mp4)
 
 Quickly create advanced wrappers from **Wrapper Manager** 
 ![wm](./assets/Wrapper_Manager.png)
