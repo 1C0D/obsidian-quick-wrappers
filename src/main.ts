@@ -22,7 +22,7 @@ export default class QWPlugin extends Plugin {
 		}
 		this.addCommand({
 			id: 'wrapper-selector',
-			name: '--Wrappers Selector--',
+			name: 'Wrappers Selector',
 
 			editorCallback: async (editor: Editor) => {
 				await wrapperChooser(this, editor)
@@ -30,7 +30,7 @@ export default class QWPlugin extends Plugin {
 		});
 		this.addCommand({
 			id: 'wrapper-manager',
-			name: '--Wrapper Manager--',
+			name: 'Wrapper Manager',
 
 			editorCallback: async (editor: Editor) => {
 				new WrappersManager(this).open()
