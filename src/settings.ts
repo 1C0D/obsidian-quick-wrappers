@@ -18,7 +18,7 @@ export class QWSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Create a New Wrapper")
-			.setDesc("markers: @@sel→selection, @@cb→clipboard, @@time, @@date, @@(dd MM-DD-YYYY HH:MM:SS)→date/time, @@+(dd MM-DD-YYYY)→date picker")
+			.setDesc("you can insert markers in your tag")
 			.addButton(cb => {
 				cb.setIcon("plus")
 					.onClick(() => {
@@ -76,7 +76,7 @@ export function wrapperSettings(_this: QWSettingTab | WrappersManager, name: str
 					const _id = pluginId + ":" + id;
 					// ouch !
 					this.app.commands.removeCommand(_id);
-					await createCommand(_this.plugin, id, newWrapper.name, newWrapper.tagInput)
+					await createCommand(_this.plugin, newWrapper)
 
 					_this instanceof QWSettingTab ? _this.display() : _this.onOpen()
 				}, wrapper).open();

@@ -77,7 +77,7 @@ export default class wrapperModal extends Modal {
                             } else {
                                 this.plugin.settings.wrappers[id] = this.wrapper!
                                 this.plugin.settings.names.push(this.wrapper!.name)
-                                await createCommand(this, id, name, tagInput)
+                                await createCommand(this, this.wrapper!)
                             }
 
                             await this.plugin.saveSettings()

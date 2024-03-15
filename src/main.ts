@@ -2,7 +2,7 @@ import { Editor, Notice, Plugin, moment } from "obsidian";
 import { QWSettingTab } from "./settings";
 import { DEFAULT_SETTINGS } from "./types/variables";
 import { createCommand } from "./command-creator";
-import { QWSettings } from "./types/global";
+import { QWSettings, Wrapper } from "./types/global";
 import { wrapperChooser } from "./wrapper-chooser";
 import { WrappersManager } from "./wrappers-manager";
 import { DatePicker } from "src/date-pickers";
@@ -13,11 +13,10 @@ export default class QWPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 		const wrappers = this.settings.wrappers
-		const wrappersIds = Object.keys(wrappers)
-		if (wrappersIds.length) {
-			for (const id of wrappersIds) {
-				const { name, tagInput } = wrappers[id];
-				createCommand(this, id, name, tagInput)
+		const wrappersVals = Object.values(wrappers)
+		if (wrappersVals.length) {
+			for (const item of wrappersVals) {
+				createCommand(this, item)
 			}
 		}
 		this.addCommand({
@@ -40,7 +39,7 @@ export default class QWPlugin extends Plugin {
 		this.addSettingTab(new QWSettingTab(this));
 	}
 
-	async modifyText(editor: Editor, tag: string) {
+	async modifyText(editor: Editor, wrapper: Wrapper) {
 		const selection = editor.getSelection();
 		const from = editor.getCursor("from");
 		const to = editor.getCursor("to");
@@ -52,9 +51,9 @@ export default class QWPlugin extends Plugin {
 
 		let length = 0
 		if (!selection) {
-			length = await this.addTag(editor, tag, selection);
+			length = await this.addTag(editor, wrapper.tagInput, selection);
 		} else {
-			length = await this.toggleTag(editor, tag, selection);
+			length = await this.toggleTag(editor, wrapper.tagInput, selection);
 		}
 		const tos = fos + length
 		this.setSelection(editor, fos, tos);

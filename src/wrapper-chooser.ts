@@ -13,7 +13,7 @@ async function justDoIt(_this: QWPlugin, editor: Editor, name: string) {
     )?.id
     const tag = wrappers[id!]?.tagInput
     if (!tag) return
-    await _this.modifyText(editor, tag) // apply the wrapper
+    await _this.modifyText(editor, wrappers[id!]) // apply the wrapper
 }
 
 export class CommonSuggest extends FuzzySuggestModal<string> {
